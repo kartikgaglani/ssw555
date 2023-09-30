@@ -1,0 +1,30 @@
+| ID    | NAME             | SEX   | BIRT       | FAMC   |   AGE | ALIVE   | FAMS             | DEAT       |
+|-------|------------------|-------|------------|--------|-------|---------|------------------|------------|
+| @I1@  | Dev /Naik/       | M     | 1999-08-19 | @F1@   |    24 | True    |                  |            |
+| @I2@  | Sandhya /Naik/   | F     | 1968-12-08 | @F2@   |    54 | True    | ['@F1@']         |            |
+| @I3@  | Sandip /Naik/    | M     | 1964-04-05 | @F3@   |    59 | True    | ['@F1@']         |            |
+| @I4@  | Ajay /Naik/      | M     | 2002-02-28 | @F1@   |    21 | True    |                  |            |
+| @I5@  | Kashibai /More/  | F     | 1940-04-01 |        |    61 | False   | ['@F2@']         | 2001-08-08 |
+| @I6@  | Tulsidas /More/  | M     | 1940-01-29 |        |    70 | False   | ['@F2@']         | 2010-09-24 |
+| @I7@  | Vaishnavi /More/ | F     | 1971-01-07 | @F2@   |    52 | True    |                  |            |
+| @I8@  | Mahesh /Naik/    | M     | 1932-09-30 | @F4@   |    61 | False   | ['@F3@']         | 1994-01-19 |
+| @I9@  | Anjali /Naik/    | F     | 1934-07-31 | @F5@   |    55 | False   | ['@F3@']         | 1990-04-23 |
+| @I10@ | Devanand /Naik/  | M     | 1962-05-16 | @F3@   |    53 | False   | ['@F6@', '@F7@'] | 2016-01-08 |
+| @I11@ | Geeta /Naik/     | F     | 1907-05-26 |        |    84 | False   | ['@F4@']         | 1992-03-21 |
+| @I12@ | Tukaram /Naik/   | M     | 1905-02-12 |        |    73 | False   | ['@F4@']         | 1978-08-20 |
+| @I13@ | Madhavi /Bhide/  | F     | 1912-09-11 |        |    66 | False   | ['@F5@']         | 1979-06-30 |
+| @I14@ | Tarak /Bhide/    | M     | 1902-12-15 |        |    80 | False   | ['@F5@']         | 1983-11-12 |
+| @I15@ | Sonika /Naik/    | F     | 1973-12-07 |        |    49 | True    | ['@F6@']         |            |
+| @I16@ | Babita /Naik/    | F     | 1963-12-27 |        |    44 | False   | ['@F7@']         | 2008-09-25 |
+
+| ID   | WIFE   | HUSB   | CHIL              | MARR       | DIV        | HUSB NAME       | WIFE NAME       |
+|------|--------|--------|-------------------|------------|------------|-----------------|-----------------|
+| @F1@ | @I2@   | @I3@   | ['@I1@', '@I4@']  | 1995-05-30 | 2005-02-06 | Sandip /Naik/   | Sandhya /Naik/  |
+| @F2@ | @I5@   | @I6@   | ['@I2@', '@I7@']  | 1965-04-21 |            | Tulsidas /More/ | Kashibai /More/ |
+| @F3@ | @I9@   | @I8@   | ['@I10@', '@I3@'] | 1960-12-28 |            | Mahesh /Naik/   | Anjali /Naik/   |
+| @F4@ | @I11@  | @I12@  | ['@I8@']          | 1930-08-04 |            | Tukaram /Naik/  | Geeta /Naik/    |
+| @F5@ | @I13@  | @I14@  | ['@I9@']          | 1932-11-17 |            | Tarak /Bhide/   | Madhavi /Bhide/ |
+| @F6@ | @I15@  | @I10@  |                   | 2011-12-26 |            | Devanand /Naik/ | Sonika /Naik/   |
+| @F7@ | @I16@  | @I10@  |                   | 1995-09-09 |            | Devanand /Naik/ | Babita /Naik/   |
+
+ERRORS
