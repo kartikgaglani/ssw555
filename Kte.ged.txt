@@ -1,0 +1,55 @@
+US23: Contents of unique_name_birth list:
+('Dev /Naik/', datetime.date(1999, 8, 19))
+('Sandhya /Naik/', datetime.date(1968, 12, 8))
+('Sandip /Naik/', datetime.date(1964, 4, 5))
+('Ajay /Naik/', datetime.date(2002, 2, 28))
+('Kashibai /More/', datetime.date(1940, 4, 1))
+('Tulsidas /More/', datetime.date(1940, 1, 29))
+('Vaishnavi /More/', datetime.date(1971, 1, 7))
+('Mahesh /Naik/', datetime.date(1932, 9, 30))
+('Anjali /Naik/', datetime.date(1934, 7, 31))
+('Devanand /Naik/', datetime.date(1962, 5, 16))
+('Geeta /Naik/', datetime.date(1907, 5, 26))
+('Tukaram /Naik/', datetime.date(1905, 2, 12))
+('Madhavi /Bhide/', datetime.date(1912, 9, 11))
+('Tarak /Bhide/', datetime.date(1902, 12, 15))
+('Sonika /Naik/', datetime.date(1973, 12, 7))
+('Babita /Naik/', datetime.date(1963, 12, 27))
+US24: Contents of unique_families:
+Spouses: ('@I3@', '@I2@', datetime.date(1995, 5, 30)), Marriage Date: @F1@
+Spouses: ('@I6@', '@I5@', datetime.date(1965, 4, 21)), Marriage Date: @F2@
+Spouses: ('@I8@', '@I9@', datetime.date(1960, 12, 28)), Marriage Date: @F3@
+Spouses: ('@I12@', '@I11@', datetime.date(1930, 8, 4)), Marriage Date: @F4@
+Spouses: ('@I14@', '@I13@', datetime.date(1932, 11, 17)), Marriage Date: @F5@
+Spouses: ('@I10@', '@I15@', datetime.date(2011, 12, 26)), Marriage Date: @F6@
+Spouses: ('@I10@', '@I16@', datetime.date(1995, 9, 9)), Marriage Date: @F7@
+| ID    | NAME             | SEX   | BIRT       | FAMC   | FAMS             | DEAT       |
+|-------|------------------|-------|------------|--------|------------------|------------|
+| @I1@  | Dev /Naik/       | M     | 1999-08-19 | @F1@   |                  |            |
+| @I2@  | Sandhya /Naik/   | F     | 1968-12-08 | @F2@   | ['@F1@']         |            |
+| @I3@  | Sandip /Naik/    | M     | 1964-04-05 | @F3@   | ['@F1@']         |            |
+| @I4@  | Ajay /Naik/      | M     | 2002-02-28 | @F1@   |                  |            |
+| @I5@  | Kashibai /More/  | F     | 1940-04-01 |        | ['@F2@']         | 2001-08-08 |
+| @I6@  | Tulsidas /More/  | M     | 1940-01-29 |        | ['@F2@']         | 2010-09-24 |
+| @I7@  | Vaishnavi /More/ | F     | 1971-01-07 | @F2@   |                  |            |
+| @I8@  | Mahesh /Naik/    | M     | 1932-09-30 | @F4@   | ['@F3@']         | 1994-01-19 |
+| @I9@  | Anjali /Naik/    | F     | 1934-07-31 | @F5@   | ['@F3@']         | 1990-04-23 |
+| @I10@ | Devanand /Naik/  | M     | 1962-05-16 | @F3@   | ['@F6@', '@F7@'] | 2016-01-08 |
+| @I11@ | Geeta /Naik/     | F     | 1907-05-26 |        | ['@F4@']         | 1992-03-21 |
+| @I12@ | Tukaram /Naik/   | M     | 1905-02-12 |        | ['@F4@']         | 1978-08-20 |
+| @I13@ | Madhavi /Bhide/  | F     | 1912-09-11 |        | ['@F5@']         | 1979-06-30 |
+| @I14@ | Tarak /Bhide/    | M     | 1902-12-15 |        | ['@F5@']         | 1983-11-12 |
+| @I15@ | Sonika /Naik/    | F     | 1973-12-07 |        | ['@F6@']         |            |
+| @I16@ | Babita /Naik/    | F     | 1963-12-27 |        | ['@F7@']         | 2008-09-25 |
+
+| ID   | WIFE   | HUSB   | CHIL              | MARR       | DIV        |
+|------|--------|--------|-------------------|------------|------------|
+| @F1@ | @I2@   | @I3@   | ['@I1@', '@I4@']  | 1995-05-30 | 2005-02-06 |
+| @F2@ | @I5@   | @I6@   | ['@I2@', '@I7@']  | 1965-04-21 |            |
+| @F3@ | @I9@   | @I8@   | ['@I10@', '@I3@'] | 1960-12-28 |            |
+| @F4@ | @I11@  | @I12@  | ['@I8@']          | 1930-08-04 |            |
+| @F5@ | @I13@  | @I14@  | ['@I9@']          | 1932-11-17 |            |
+| @F6@ | @I15@  | @I10@  |                   | 2011-12-26 |            |
+| @F7@ | @I16@  | @I10@  |                   | 1995-09-09 |            |
+
+ERRORS
