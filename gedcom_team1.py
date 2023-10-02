@@ -383,8 +383,7 @@ for family in fams:
 
     result = family_output(family_names)
     if result:
-        errors.append("ERROR: FAMILY: US25: " +
-                      family["ID"] + ": First names of individuals in the family cannot be same.")
+        errors.append("ERROR US25: " + family["ID"] + ": First names of individuals in the family cannot be same.")
 
 outfile = open(filename + ".txt", "w")
 
