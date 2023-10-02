@@ -173,7 +173,7 @@ def check_living_age(individual):
                 errors.append(f"ERROR: (US07) - Individual {ind['ID']} is alive and has an age of {age_at_current_date} years which is 150 years or more after birth.")
 
 # US23
-def check_unique_name_birth(outfile):
+def check_unique_name_birth(individual):
     unique_name_birth = []
     
     for ind in individual:
@@ -184,21 +184,11 @@ def check_unique_name_birth(outfile):
                 errors.append(
                     f"ERROR: US23 - Individuals with the same name and birth date found: {name}, Birth Date: {birth}")
             unique_name_birth.append((name, birth))
-    
-    # # Print the contents of the unique_name_birth list to the console
-    # print("US23: Contents of unique_name_birth list:")
-    # for item in unique_name_birth:
-    #     print(item)
-    
-    # Write the contents of the unique_name_birth list to the output file
-    outfile.write("US23: Contents of unique_name_birth list:\n")
-    for item in unique_name_birth:
-        outfile.write(f"{item}\n")
 
 
 #US24
 
-def check_unique_family_by_spouses(outfile):
+def check_unique_family_by_spouses(fams):
     unique_families = {}
 
     for family in fams:
@@ -222,15 +212,6 @@ def check_unique_family_by_spouses(outfile):
                 # Add the unique key to the dictionary with the family ID as the value
                 unique_families[unique_key] = family['ID']
 
-    # # Print the contents of unique_families to the console
-    # print("Contents of unique_families:")
-    # for key, value in unique_families.items():
-    #     print(f"Spouses: {key}, Marriage Date: {value}")
-
-    # Write the contents of unique_families to the output file
-    outfile.write("US24: Contents of unique_families:\n")
-    for key, value in unique_families.items():
-        outfile.write(f"Spouses: {key}, Marriage Date: {value}\n")
 
 
 
@@ -242,7 +223,8 @@ def family_output(names):
         first_names.append(names[0])
 
     res = {x for x in first_names if first_names.count(x) > 1}
-    return res
+    if res:
+        errors.append("There should be no more than one child with the same name and birth date in a family")
 
 filename = ""
 
@@ -312,28 +294,6 @@ def init():
             for line in infile:
                 read_line(line)
 
-        # Create the output file
-        outfile_name = filename + ".txt"
-        with open(outfile_name, "w") as outfile:
-            check_unique_name_birth(outfile)  # Pass the outfile as an argument
-            check_unique_family_by_spouses(outfile)
-            outfile.write(
-                tabulate(individual, headers="keys", tablefmt="github"))
-            outfile.write('\n\n')
-            outfile.write(tabulate(fams, headers="keys", tablefmt="github"))
-            outfile.write('\n\n')
-
-            check_dates_before_current(current_date, individual, fams)
-            check_death_age(individual)
-            check_living_age(individual)
-
-            outfile.write('ERRORS\n')
-            for err in errors:
-                outfile.write(err)
-                outfile.write('\n')
-
-        print(f"Output has been written to {outfile_name}")
-
     except FileNotFoundError:
         print('''
         ERROR: GEDCOM file does not exist.
@@ -343,64 +303,63 @@ def init():
 
 
 
-individual.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
-fams.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
+    individual.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
+    fams.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
 
-for per in individual:
-    per = age(current_date, per)
+    for per in individual:
+        per = age(current_date, per)
 
-for family in fams:
+    for family in fams:
 
-    family_names = []
+        family_names = []
 
-    husbandID = int(''.join(filter(str.isdigit, family["HUSB"])))
-    husband = search_id(individual, len(individual), 0, husbandID)
-    if not husband:
-        raise Exception("Husband ID must exist.")
-    else:
-        family_names.append(husband['NAME'])
+        husbandID = int(''.join(filter(str.isdigit, family["HUSB"])))
+        husband = search_id(individual, len(individual), 0, husbandID)
+        if not husband:
+            raise Exception("Husband ID must exist.")
+        else:
+            family_names.append(husband['NAME'])
 
-    wife_id = int(''.join(filter(str.isdigit, family["WIFE"])))
-    wife = search_id(individual, len(individual), 0, wife_id)
-    if not wife:
-        raise Exception("Wife ID must exist.")
-    else:
-        family_names.append(wife['NAME'])
+        wife_id = int(''.join(filter(str.isdigit, family["WIFE"])))
+        wife = search_id(individual, len(individual), 0, wife_id)
+        if not wife:
+            raise Exception("Wife ID must exist.")
+        else:
+            family_names.append(wife['NAME'])
 
-    family["HUSB"] = husband["NAME"]
-    family["WIFE"] = wife["NAME"]
+        family["HUSB"] = husband["NAME"]
+        family["WIFE"] = wife["NAME"]
 
-    if "CHIL" in family:
-        for chil_str in family["CHIL"]:
-            child_id = int(''.join(filter(str.isdigit, chil_str)))
-            child = search_id(individual, len(individual), 0, child_id)
-            if not child:
-                raise Exception("Wife ID must exist.")
-            else:
-                family_names.append(child['NAME'])
+        if "CHIL" in family:
+            for chil_str in family["CHIL"]:
+                child_id = int(''.join(filter(str.isdigit, chil_str)))
+                child = search_id(individual, len(individual), 0, child_id)
+                if not child:
+                    raise Exception("Wife ID must exist.")
+                else:
+                    family_names.append(child['NAME'])
 
-            childBirthdate = child["BIRT"]
+                #childBirthdate = child["BIRT"]
+    #US 25
+        result = family_output(family_names)
+        if result:
+            errors.append("ERROR for US25: " +family["ID"] + ": First names of individuals in the family cannot be same.")
 
-    result = family_output(family_names)
-    if result:
-        errors.append("ERROR: FAMILY: US25: " +
-                      family["ID"] + ": First names of individuals in the family cannot be same.")
+    outfile = open(filename + ".txt", "w")
 
-outfile = open(filename + ".txt", "w")
+    outfile.write(tabulate(individual, headers="keys", tablefmt="github"))
+    outfile.write('\n\n')
+    outfile.write(tabulate(fams, headers="keys", tablefmt="github"))
+    outfile.write('\n\n')
 
-outfile.write(tabulate(individual, headers="keys", tablefmt="github"))
-outfile.write('\n\n')
-outfile.write(tabulate(fams, headers="keys", tablefmt="github"))
-outfile.write('\n\n')
+    outfile.write('ERRORS\n')
+    for err in errors:
+        outfile.write(err)
+        outfile.write('\n')
 
-outfile.write('ERRORS\n')
-for err in errors:
-    outfile.write(err)
-    outfile.write('\n')
-
-outfile.close()
+    outfile.close()
 
 init()
 
-=======
+
 sys.exit()
