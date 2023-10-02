@@ -129,6 +129,51 @@ def read_line(fileLine):
 
     return
 
+#US01
+def check_dates_before_current(current_date, individuals, families):
+    for ind in individuals:
+        if 'BIRT' in ind:
+            birth_date = ind['BIRT']
+            if birth_date > current_date:
+                errors.append(f"ERROR:(US01) - Individual {ind['ID']} has a birth date ({birth_date}) after the current date.")
+        if 'DEAT' in ind:
+            death_date = ind['DEAT']
+            if death_date > current_date:
+                errors.append(f"ERROR:(US01) - Individual {ind['ID']} has a death date ({death_date}) after the current date.")
+    
+    for fam in families:
+        if 'MARR' in fam:
+            marriage_date = fam['MARR']
+            if marriage_date > current_date:
+                errors.append(f"ERROR:(US01) - Family {fam['ID']} has a marriage date ({marriage_date}) after the current date.")
+        if 'DIV' in fam:
+            divorce_date = fam['DIV']
+            if divorce_date > current_date:
+                errors.append(f"ERROR:(US01) - Family {fam['ID']} has a divorce date ({divorce_date}) after the current date.")
+
+#US07
+def check_death_age(individual):
+    for ind in individual:
+        if 'BIRT' in ind and 'DEAT' in ind:
+            birth_date = ind['BIRT']
+            death_date = ind['DEAT']
+            age_at_death = death_date.year - birth_date.year - \
+                ((death_date.month, death_date.day) < (birth_date.month, birth_date.day))
+            if age_at_death >= 150:
+                errors.append(f"ERROR: (US07) - Individual {ind['ID']} has a death age of {age_at_death} years which is 150 years or more after birth.")
+
+#US07
+def check_living_age(individual):
+    for ind in individual:
+        if 'BIRT' in ind and 'DEAT' not in ind:
+            birth_date = ind['BIRT']
+            age_at_current_date = current_date.year - birth_date.year - \
+                ((current_date.month, current_date.day) < (birth_date.month, birth_date.day))
+            if age_at_current_date >= 150:
+                errors.append(f"ERROR: (US07) - Individual {ind['ID']} is alive and has an age of {age_at_current_date} years which is 150 years or more after birth.")
+
+
+
 # US23
 def check_unique_name_birth(outfile):
     unique_name_birth = []
@@ -279,6 +324,12 @@ def init():
             outfile.write('\n\n')
             outfile.write(tabulate(fams, headers="keys", tablefmt="github"))
             outfile.write('\n\n')
+
+            
+            check_dates_before_current(current_date, individual, fams)
+            check_death_age(individual)
+            check_living_age(individual)
+
 
             outfile.write('ERRORS\n')
             for err in errors:
