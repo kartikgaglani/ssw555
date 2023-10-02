@@ -305,20 +305,20 @@ def init():
         with open(outfile_name, "w") as outfile:
             check_unique_name_birth(outfile)  # Pass the outfile as an argument
             check_unique_family_by_spouses(outfile)
-            outfile.write(
-                tabulate(individual, headers="keys", tablefmt="github"))
-            outfile.write('\n\n')
-            outfile.write(tabulate(fams, headers="keys", tablefmt="github"))
-            outfile.write('\n\n')
+            # outfile.write(
+            #     tabulate(individual, headers="keys", tablefmt="github"))
+            # outfile.write('\n\n')
+            # outfile.write(tabulate(fams, headers="keys", tablefmt="github"))
+            # outfile.write('\n\n')
 
             check_dates_before_current(current_date, individual, fams)
             check_death_age(individual)
             check_living_age(individual)
 
-            outfile.write('ERRORS\n')
-            for err in errors:
-                outfile.write(err)
-                outfile.write('\n')
+            # outfile.write('ERRORS\n')
+            # for err in errors:
+            #     outfile.write(err)
+            #     outfile.write('\n')
 
         print(f"Output has been written to {outfile_name}")
 
@@ -368,7 +368,7 @@ def init():
                     family_names.append(child['NAME'])
 
                 childBirthdate = child["BIRT"]
-
+        #US 25
         result = family_output(family_names)
         if result:
             errors.append("ERROR US25: " + family["ID"] + ": First names of individuals in the family cannot be same.")

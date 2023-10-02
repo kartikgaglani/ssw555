@@ -10,7 +10,7 @@
 | @I8@  | Mahesh /Naik/    | M     | 1932-09-30 | @F4@   |    61 | False   | ['@F3@']         | 1994-01-19 |
 | @I9@  | Anjali /Naik/    | F     | 1934-07-31 | @F5@   |    55 | False   | ['@F3@']         | 1990-04-23 |
 | @I10@ | Anjali /Naik/    | M     | 2024-05-03 | @F3@   |    -9 | False   | ['@F6@', '@F7@'] | 2016-01-08 |
-| @I11@ | Geeta /Naik/     | F     | 1907-05-26 |        |    84 | False   | ['@F4@']         | 1992-03-21 |
+| @I11@ | Geeta /Naik/     | F     | 1707-05-26 |        |   284 | False   | ['@F4@']         | 1992-03-21 |
 | @I12@ | Tukaram /Naik/   | M     | 1905-02-12 |        |    73 | False   | ['@F4@']         | 1978-08-20 |
 | @I13@ | Madhavi /Bhide/  | F     | 1912-09-11 |        |    66 | False   | ['@F5@']         | 1979-06-30 |
 | @I14@ | Tarak /Bhide/    | M     | 1902-12-15 |        |    80 | False   | ['@F5@']         | 1983-11-12 |
@@ -25,9 +25,10 @@
 | @F4@ | Geeta /Naik/    | Tukaram /Naik/  | ['@I8@']          | 1930-08-04 |            |
 | @F5@ | Madhavi /Bhide/ | Tarak /Bhide/   | ['@I9@']          | 1932-11-17 |            |
 | @F6@ | Sonika /Naik/   | Anjali /Naik/   |                   | 2011-12-26 |            |
-| @F7@ | Babita /Naik/   | Anjali /Naik/   |                   | 1995-09-09 |            |
+| @F7@ | Babita /Naik/   | Anjali /Naik/   |                   | 2011-12-26 |            |
 
 ERRORS
 ERROR: US23 - Individuals with the same name and birth date found: Anjali /Naik/, Birth Date: 2024-05-03
 ERROR:(US01) - Individual @I10@ has a birth date (2024-05-03) after the current date.
+ERROR: (US07) - Individual @I11@ has a death age of 284 years which is 150 years or more after birth.
 ERROR US25: @F3@: First names of individuals in the family cannot be same.
