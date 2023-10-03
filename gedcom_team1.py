@@ -273,7 +273,14 @@ def age(today_date, person_information):
         person_information["ALIVE"] = True
 
     return person_information
-
+#US 13
+def check_child_bdae(bdae_l):
+    for i, bdae_l1 in enumerate(bdae_l):
+        for j, bdae_l2 in enumerate(bdae_l[i+1:], i+1):
+            ans = abs((bdae_l1 - bdae_l2).days)
+            if ans < 240:
+                return False
+    return True
 
 def search_id(array, high, low, target):
     if high <= low:
@@ -288,8 +295,9 @@ def search_id(array, high, low, target):
     if mid_ < target:
         return search_id(array, high, mid+1, target)
     return array[mid]
-
-
+#US 10
+def after_14yrs(a,b):
+    return a.year - b.year - ((b.month, b.day) < (a.month, a.day)) > 14
 def init():
     try:
         filename = input(
@@ -357,8 +365,18 @@ def init():
 
         family["HUSB"] = husband["NAME"]
         family["WIFE"] = wife["NAME"]
+        hbdae = husband["BIRT"]
+        wbdae = wife["BIRT"]
+        mdae = family["MARR"]
+
+        #US 10
+        if not after_14yrs(hbdae, mdae):
+            errors.append("ERROR US10: Marriage" +husband["NAME"]+ "should be at least 14 years after birth of husband")
+        if not after_14yrs(wbdae, mdae):
+            errors.append("ERROR US10: Marriage" +wife['NAME']+" should be at least 14 years after birth of wife")
 
         if "CHIL" in family:
+            children_bdae_dates =[]
             for chil_str in family["CHIL"]:
                 child_id = int(''.join(filter(str.isdigit, chil_str)))
                 child = search_id(individual, len(individual), 0, child_id)
@@ -367,7 +385,8 @@ def init():
                 else:
                     family_names.append(child['NAME'])
 
-                childBirthdate = child["BIRT"]
+            if not check_child_bdae(children_bdae_dates):
+                errors.append("ERROR US 10: Birth dates of siblings should be more than 8 months apart or less than 2 days apart.")    
         #US 25
         result = family_output(family_names)
         if result:
