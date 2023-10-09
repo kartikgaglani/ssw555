@@ -270,7 +270,14 @@ def check_unique_family_by_spouses(outfile):
 
 
 
+# US08 - Birth before marriage of parents
+def birth_before_marriage(marr,birth_child):
+ 	return marr.year - birth_child.year - ((marr.month, marr.day) < (birth_child.month , birth_child.day)) >=  0
 
+def birth_before_divorce(birth_child, div):
+    div -= timedelta(weeks = 40)
+    return div.year - birth_child.year - ((div.month, div.day) < (birth_child.month, birth_child.day)) >= 0
+     
 
 # US25
 def family_output(names):
@@ -429,7 +436,7 @@ def init():
             errors.append("ERROR US10: Marriage" +wife['NAME']+" should be at least 14 years after birth of wife")
 
         if "CHIL" in family:
-            children_bdae_dates =[]
+            children_bdae_dates = []
             for chil_str in family["CHIL"]:
                 child_id = int(''.join(filter(str.isdigit, chil_str)))
                 child = search_id(individual, len(individual), 0, child_id)
@@ -437,6 +444,17 @@ def init():
                     raise Exception("Wife ID must exist.")
                 else:
                     family_names.append(child['NAME'])
+                children_bdae_dates.append(child['BIRT'])
+                childBirthdate = child['BIRT']
+                
+                #US 08 Birth before the marriage of parents(and no more than 9 months after their divorce)
+                if "DIV" in family:
+                    divorce = family["DIV"]
+                    if birth_before_divorce(divorce, childBirthdate):
+                        errors.append("ERROR: US08: " + family["ID"] + ": Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + " should be no more than 9 months after the divorce of the parents on " + mdae.strftime("%x") + ".")
+                else:
+                    if birth_before_marriage(mdae, childBirthdate):
+                        errors.append("ERROR: US08: " + family["ID"] + ": Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + " should be after marriage " + mdae.strftime("%x") + ".")
 
             if not check_child_bdae(children_bdae_dates):
                 errors.append("ERROR US 10: Birth dates of siblings should be more than 8 months apart or less than 2 days apart.")    
