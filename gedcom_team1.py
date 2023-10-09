@@ -135,21 +135,21 @@ def check_dates_before_current(current_date, individuals, families):
         if 'BIRT' in ind:
             birth_date = ind['BIRT']
             if birth_date > current_date:
-                errors.append(f"ERROR:(US01) - Individual {ind['ID']} has a birth date ({birth_date}) after the current date.")
+                errors.append(f"ERROR: (US01) - Individual {ind['ID']} has a birth date ({birth_date}) after the current date.")
         if 'DEAT' in ind:
             death_date = ind['DEAT']
             if death_date > current_date:
-                errors.append(f"ERROR:(US01) - Individual {ind['ID']} has a death date ({death_date}) after the current date.")
+                errors.append(f"ERROR: (US01) - Individual {ind['ID']} has a death date ({death_date}) after the current date.")
     
     for fam in families:
         if 'MARR' in fam:
             marriage_date = fam['MARR']
             if marriage_date > current_date:
-                errors.append(f"ERROR:(US01) - Family {fam['ID']} has a marriage date ({marriage_date}) after the current date.")
+                errors.append(f"ERROR: (US01) - Family {fam['ID']} has a marriage date ({marriage_date}) after the current date.")
         if 'DIV' in fam:
             divorce_date = fam['DIV']
             if divorce_date > current_date:
-                errors.append(f"ERROR:(US01) - Family {fam['ID']} has a divorce date ({divorce_date}) after the current date.")
+                errors.append(f"ERROR: (US01) - Family {fam['ID']} has a divorce date ({divorce_date}) after the current date.")
 
 #US07
 def check_death_age(individual):
@@ -171,6 +171,29 @@ def check_living_age(individual):
                 ((current_date.month, current_date.day) < (birth_date.month, birth_date.day))
             if age_at_current_date >= 150:
                 errors.append(f"ERROR: (US07) - Individual {ind['ID']} is alive and has an age of {age_at_current_date} years which is 150 years or more after birth.")
+
+#US02
+def check_birth_before_marriage(individuals, families):
+    family_marriage_dates = {fam['ID']: fam.get('MARR') for fam in families}
+
+    for ind in individuals:
+        if 'BIRT' in ind and 'FAMS' in ind:
+            birth_date = ind['BIRT']
+            family_ids = ind['FAMS']
+            for fam_id in family_ids:
+                marriage_date = family_marriage_dates.get(fam_id)
+                if marriage_date and birth_date > marriage_date:
+                    errors.append(f"ERROR: (US02) - Birth of individual {ind['ID']} occurred after their marriage in family {fam_id}.")
+
+#US03
+def check_birth_before_death(individuals):
+    for ind in individuals:
+        if 'BIRT' in ind and 'DEAT' in ind:
+            birth_date = ind['BIRT']
+            death_date = ind['DEAT']
+            if birth_date > death_date:
+                errors.append(f"ERROR: (US03) -  Birth of individual {ind['ID']} occurred after their death.")
+
 
 # US23
 def check_unique_name_birth(outfile):
@@ -322,6 +345,8 @@ def init():
             check_dates_before_current(current_date, individual, fams)
             check_death_age(individual)
             check_living_age(individual)
+            check_birth_before_marriage(individual,fams)
+            check_birth_before_death(individual)
 
             # outfile.write('ERRORS\n')
             # for err in errors:
