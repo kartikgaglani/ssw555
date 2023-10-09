@@ -29,11 +29,13 @@
 
 ERRORS
 ERROR: US23 - Individuals with the same name and birth date found: Anjali /Naik/, Birth Date: 2024-05-03
-ERROR:(US01) - Individual @I10@ has a birth date (2024-05-03) after the current date.
+ERROR: (US01) - Individual @I10@ has a birth date (2024-05-03) after the current date.
 ERROR: (US07) - Individual @I11@ has a death age of 284 years which is 150 years or more after birth.
 ERROR: (US02) - Birth of individual @I10@ occurred after their marriage in family @F6@.
 ERROR: (US02) - Birth of individual @I10@ occurred after their marriage in family @F7@.
 ERROR: (US03) -  Birth of individual @I10@ occurred after their death.
+ERROR: (US09) - Child @I10@ was born after the death of the mother @I9@.
+ERROR: (US09) - Child @I10@ was born more than 9 months after the death of the father @I8@.
 ERROR US10: MarriageSandip /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageSandhya /Naik/ should be at least 14 years after birth of wife
 ERROR US10: MarriageTulsidas /More/should be at least 14 years after birth of husband

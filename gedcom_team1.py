@@ -1,6 +1,6 @@
 from tabulate import tabulate
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 
 if __name__ == '_build_':
@@ -194,6 +194,33 @@ def check_birth_before_death(individuals):
             if birth_date > death_date:
                 errors.append(f"ERROR: (US03) -  Birth of individual {ind['ID']} occurred after their death.")
 
+#US09
+def check_birth_before_parent_death(individuals, families):
+
+    birth_dates = {ind['ID']: ind.get('BIRT') for ind in individuals}
+    death_dates = {ind['ID']: ind.get('DEAT') for ind in individuals}
+
+    for family in families:
+        if 'CHIL' in family:
+            children = family['CHIL']
+            mother_id = family.get('WIFE')
+            father_id = family.get('HUSB')
+
+            mother_death_date = death_dates.get(mother_id)
+            father_death_date = death_dates.get(father_id)
+
+            for child_id in children:
+                birth_date = birth_dates.get(child_id)
+
+                if mother_death_date and birth_date and birth_date > mother_death_date:
+                    errors.append(f"ERROR: (US09) - Child {child_id} was born after the death of the mother {mother_id}.")
+
+                if father_death_date and birth_date:
+                    difference = (birth_date.year - father_death_date.year) * 12 + birth_date.month - father_death_date.month
+                    if difference > 9:
+                        errors.append(f"ERROR: (US09) - Child {child_id} was born more than 9 months after the death of the father {father_id}.")
+
+
 
 # US23
 def check_unique_name_birth(outfile):
@@ -347,6 +374,7 @@ def init():
             check_living_age(individual)
             check_birth_before_marriage(individual,fams)
             check_birth_before_death(individual)
+            check_birth_before_parent_death(individual,fams)
 
             # outfile.write('ERRORS\n')
             # for err in errors:
