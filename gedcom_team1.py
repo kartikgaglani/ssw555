@@ -330,6 +330,81 @@ def age(today_date, person_information):
         person_information["ALIVE"] = True
 
     return person_information
+#US 14
+# Create a dictionary to store individuals' information
+individuals = {}
+
+# Function to add individual data to the dictionary
+def add_individual(indi_id, name, sex, birth_date, death_date=None, famc=None, fams=None):
+    individuals[indi_id] = {
+        "name": name,
+        "sex": sex,
+        "birth_date": birth_date,
+        "death_date": death_date,
+        "famc": famc,
+        "fams": fams
+    }
+
+# Read data from the GEDCOM file
+gedcom_file_path = "C:\Users\Anna\Desktop\sprint\ssw555-1\Kte.ged"  
+with open(gedcom_file_path, "r") as gedcom_file:
+    lines = gedcom_file.readlines()
+
+# Process the GEDCOM data
+current_individual_id = None
+for line in lines:
+    parts = line.strip().split()
+    if len(parts) >= 2:
+        level = int(parts[0])
+        tag = parts[1]
+
+        if level == 0:
+            if tag == "@I" and parts[2].isdigit():
+                current_individual_id = parts[2]
+            else:
+                current_individual_id = None
+        elif level == 1 and current_individual_id:
+            if tag == "NAME":
+                name = " ".join(parts[2:])
+            elif tag == "SEX":
+                sex = parts[2]
+            elif tag == "BIRT":
+                birth_date = None
+            elif tag == "DEAT":
+                death_date = None
+            elif tag == "FAMC":
+                famc = parts[2]
+            elif tag == "FAMS":
+                fams = parts[2]
+
+    elif current_individual_id:
+        if tag == "DATE":
+            date = " ".join(parts[2:])
+            if "BIRT" in line:
+                birth_date = date
+            elif "DEAT" in line:
+                death_date = date
+
+        elif tag == "MARR":
+            fams = parts[2]
+
+    if current_individual_id and "BIRT" not in line and "DEAT" not in line:
+        add_individual(current_individual_id, name, sex, birth_date, death_date, famc, fams)
+
+# Print individuals' information
+for indi_id, data in individuals.items():
+    print(f"Individual ID: {indi_id}")
+    print(f"Name: {data['name']}")
+    print(f"Sex: {data['sex']}")
+    print(f"Birth Date: {data['birth_date']}")
+    if data['death_date']:
+        print(f"Death Date: {data['death_date']}")
+    if data['famc']:
+        print(f"Child of Family: {data['famc']}")
+    if data['fams']:
+        print(f"Spouse in Family: {data['fams']}")
+    print()
+
 #US 13
 def check_child_bdae(bdae_l):
     for i, bdae_l1 in enumerate(bdae_l):
