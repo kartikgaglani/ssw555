@@ -56,7 +56,6 @@ ERROR US10: MarriageTulsidas /More/should be at least 14 years after birth of hu
 ERROR US10: MarriageKashibai /More/ should be at least 14 years after birth of wife
 ERROR US10: MarriageMahesh /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageAnjali /Naik/ should be at least 14 years after birth of wife
-ERROR US25: @F3@: First names of individuals in the family cannot be same.
 ERROR US10: MarriageTukaram /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageGeeta /Naik/ should be at least 14 years after birth of wife
 ERROR US10: MarriageTarak /Bhide/should be at least 14 years after birth of husband
