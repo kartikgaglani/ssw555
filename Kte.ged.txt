@@ -60,7 +60,6 @@ ERROR US10: MarriageTukaram /Naik/should be at least 14 years after birth of hus
 ERROR US10: MarriageGeeta /Naik/ should be at least 14 years after birth of wife
 ERROR US10: MarriageTarak /Bhide/should be at least 14 years after birth of husband
 ERROR US10: MarriageMadhavi /Bhide/ should be at least 14 years after birth of wife
-ERROR: US08: @F5@: Child @I9@: BIRT 07/31/31 should be after marriage 11/17/32.
 ERROR US10: MarriageAnjali /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageSonika /Naik/ should be at least 14 years after birth of wife
 ERROR US10: MarriageAnjali /Naik/should be at least 14 years after birth of husband

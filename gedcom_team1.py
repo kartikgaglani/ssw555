@@ -528,18 +528,15 @@ def init():
                 #US 08 Birth before the marriage of parents(and no more than 9 months after their divorce) - bad code
                 if "DIV" in family:
                     divorce = family["DIV"]
-                    if birth_before_divorce(divorce, childBirthdate):
-                        errors.append("ERROR: US08: " + family["ID"] + ": Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + " should be no more than 9 months after the divorce of the parents on " + mdae.strftime("%x") + ".")
-                else:
-                    if birth_before_marriage(mdae, childBirthdate):
-                        errors.append("ERROR: US08: " + family["ID"] + ": Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + " should be after marriage " + mdae.strftime("%x") + ".")
+                    
+                
+                    
 
             if not check_child_bdae(children_bdae_dates):
                 errors.append("ERROR US 10: Birth dates of siblings should be more than 8 months apart or less than 2 days apart.")    
-        #US 25 - bad smell code
+        #US 25 - bad code
         result = family_output(family_names)
-        
-
+       
     outfile = open(filename + ".txt", "w")
 
     outfile.write(tabulate(individual, headers="keys", tablefmt="github"))
