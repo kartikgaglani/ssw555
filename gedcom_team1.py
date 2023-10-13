@@ -525,18 +525,22 @@ def init():
                 children_bdae_dates.append(child['BIRT'])
                 childBirthdate = child['BIRT']
                 
-                #US 08 Birth before the marriage of parents(and no more than 9 months after their divorce) - bad code
+                #US 08 Birth before the marriage of parents(and no more than 9 months after their divorce)
                 if "DIV" in family:
                     divorce = family["DIV"]
-                    
-                
-                    
+                    if birth_before_divorce(divorce, childBirthdate):
+                        errors.append("ERROR: US08: " + family["ID"] + ": Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + " should be no more than 9 months after the divorce of the parents on " + mdae.strftime("%x") + ".")
+                else:
+                    if birth_before_marriage(mdae, childBirthdate):
+                        errors.append("ERROR: US08: " + family["ID"] + ": Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + " should be after marriage " + mdae.strftime("%x") + ".")
 
             if not check_child_bdae(children_bdae_dates):
                 errors.append("ERROR US 10: Birth dates of siblings should be more than 8 months apart or less than 2 days apart.")    
-        #US 25 - bad code
+        #US 25
         result = family_output(family_names)
-       
+        if result:
+            errors.append("ERROR US25: " + family["ID"] + ": First names of individuals in the family cannot be same.")
+
     outfile = open(filename + ".txt", "w")
 
     outfile.write(tabulate(individual, headers="keys", tablefmt="github"))
