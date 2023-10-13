@@ -1,8 +1,6 @@
 from tabulate import tabulate
 
 from datetime import date, datetime, timedelta
-
-
 if __name__ == '_build_':
     raise Exception
 
@@ -12,7 +10,6 @@ import sys
 class Individual:
     def __init__(self, id):
         self.info = {'ID': id}
-
 
 class Family:
     def __init__(self, id):
@@ -57,13 +54,15 @@ def read_line(fileLine):
             if arguments[2] == 'INDI':
                 # US-22 Unique IDs
                 if arguments[1] not in individual_id:
-                    # print(arguments[1])
+                    #print(arguments[1])
                     ind = Individual(arguments[1])
                     individual.append(ind.info)
                     individual_id.append(arguments[1])
+                    #print(individual_id)
                 else:
                     errors.append(
                         "Individual IDs are duplicate. Please provide correct ID.")
+                    #print(errors)
             else:
 
                 if arguments[1] not in family_id:
@@ -171,6 +170,8 @@ def check_living_age(individual):
                 ((current_date.month, current_date.day) < (birth_date.month, birth_date.day))
             if age_at_current_date >= 150:
                 errors.append(f"ERROR: (US07) - Individual {ind['ID']} is alive and has an age of {age_at_current_date} years which is 150 years or more after birth.")
+
+
 
 #US02
 def check_birth_before_marriage(individuals, families):
@@ -471,9 +472,6 @@ def init():
         ''')
         sys.exit()
 
-
-
-
     individual.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
     fams.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
     #US29
@@ -550,7 +548,7 @@ def init():
     outfile.write(tabulate(fams, headers="keys", tablefmt="github"))
     outfile.write('\n\n')
     #US29
-    outfile.write('List of people deceased\n')
+    outfile.write('US 29: List of people deceased\n')
     outfile.write(tabulate(list_deceased, headers="keys", tablefmt="github"))
     outfile.write('\n\n')
 

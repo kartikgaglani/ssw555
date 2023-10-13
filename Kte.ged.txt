@@ -1,6 +1,6 @@
 | ID    | NAME             | SEX   | BIRT       | FAMC   |   AGE | ALIVE   | FAMS             | DEAT       |
 |-------|------------------|-------|------------|--------|-------|---------|------------------|------------|
-| @I1@  | Dev /Naik/       | M     | 1999-08-19 | @F1@   |    24 | True    |                  |            |
+| @I1@  | Dev /Naik/       | M     | 1995-04-19 | @F1@   |    28 | True    |                  |            |
 | @I2@  | Sandhya /Naik/   | F     | 1968-12-08 | @F2@   |    54 | True    | ['@F1@']         |            |
 | @I3@  | Sandip /Naik/    | M     | 1964-04-05 | @F3@   |    59 | True    | ['@F1@']         |            |
 | @I4@  | Ajay /Naik/      | M     | 2002-02-28 | @F1@   |    21 | True    |                  |            |
@@ -8,7 +8,7 @@
 | @I6@  | Tulsidas /More/  | M     | 1940-01-29 |        |    70 | False   | ['@F2@']         | 2010-09-24 |
 | @I7@  | Vaishnavi /More/ | F     | 1971-01-07 | @F2@   |    52 | True    |                  |            |
 | @I8@  | Mahesh /Naik/    | M     | 1932-09-30 | @F4@   |    61 | False   | ['@F3@']         | 1994-01-19 |
-| @I9@  | Anjali /Naik/    | F     | 1934-07-31 | @F5@   |    55 | False   | ['@F3@']         | 1990-04-23 |
+| @I9@  | Anjali /Naik/    | F     | 1931-07-31 | @F5@   |    58 | False   | ['@F3@']         | 1990-04-23 |
 | @I10@ | Anjali /Naik/    | M     | 2024-05-03 | @F3@   |    -9 | False   | ['@F6@', '@F7@'] | 2016-01-08 |
 | @I11@ | Geeta /Naik/     | F     | 1707-05-26 |        |   284 | False   | ['@F4@']         | 1992-03-21 |
 | @I12@ | Tukaram /Naik/   | M     | 1905-02-12 |        |    73 | False   | ['@F4@']         | 1978-08-20 |
@@ -27,13 +27,13 @@
 | @F6@ | Sonika /Naik/   | Anjali /Naik/   |                   | 2011-12-26 |            |
 | @F7@ | Babita /Naik/   | Anjali /Naik/   |                   | 2011-12-26 |            |
 
-List of people deceased
+US 29: List of people deceased
 | ID    | NAME            | SEX   | BIRT       | DEAT       | FAMS             |   AGE | ALIVE   | FAMC   |
 |-------|-----------------|-------|------------|------------|------------------|-------|---------|--------|
 | @I5@  | Kashibai /More/ | F     | 1940-04-01 | 2001-08-08 | ['@F2@']         |    61 | False   |        |
 | @I6@  | Tulsidas /More/ | M     | 1940-01-29 | 2010-09-24 | ['@F2@']         |    70 | False   |        |
 | @I8@  | Mahesh /Naik/   | M     | 1932-09-30 | 1994-01-19 | ['@F3@']         |    61 | False   | @F4@   |
-| @I9@  | Anjali /Naik/   | F     | 1934-07-31 | 1990-04-23 | ['@F3@']         |    55 | False   | @F5@   |
+| @I9@  | Anjali /Naik/   | F     | 1931-07-31 | 1990-04-23 | ['@F3@']         |    58 | False   | @F5@   |
 | @I10@ | Anjali /Naik/   | M     | 2024-05-03 | 2016-01-08 | ['@F6@', '@F7@'] |    -9 | False   | @F3@   |
 | @I11@ | Geeta /Naik/    | F     | 1707-05-26 | 1992-03-21 | ['@F4@']         |   284 | False   |        |
 | @I12@ | Tukaram /Naik/  | M     | 1905-02-12 | 1978-08-20 | ['@F4@']         |    73 | False   |        |
@@ -61,6 +61,7 @@ ERROR US10: MarriageTukaram /Naik/should be at least 14 years after birth of hus
 ERROR US10: MarriageGeeta /Naik/ should be at least 14 years after birth of wife
 ERROR US10: MarriageTarak /Bhide/should be at least 14 years after birth of husband
 ERROR US10: MarriageMadhavi /Bhide/ should be at least 14 years after birth of wife
+ERROR: US08: @F5@: Child @I9@: BIRT 07/31/31 should be after marriage 11/17/32.
 ERROR US10: MarriageAnjali /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageSonika /Naik/ should be at least 14 years after birth of wife
 ERROR US10: MarriageAnjali /Naik/should be at least 14 years after birth of husband
