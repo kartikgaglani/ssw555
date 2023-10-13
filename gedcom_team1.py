@@ -1,8 +1,6 @@
 from tabulate import tabulate
-from datetime import date, datetime
 
-
-
+from datetime import date, datetime, timedelta
 if __name__ == '_build_':
     raise Exception
 
@@ -12,7 +10,6 @@ import sys
 class Individual:
     def __init__(self, id):
         self.info = {'ID': id}
-
 
 class Family:
     def __init__(self, id):
@@ -57,13 +54,15 @@ def read_line(fileLine):
             if arguments[2] == 'INDI':
                 # US-22 Unique IDs
                 if arguments[1] not in individual_id:
-                    # print(arguments[1])
+                    #print(arguments[1])
                     ind = Individual(arguments[1])
                     individual.append(ind.info)
                     individual_id.append(arguments[1])
+                    #print(individual_id)
                 else:
                     errors.append(
                         "Individual IDs are duplicate. Please provide correct ID.")
+                    #print(errors)
             else:
 
                 if arguments[1] not in family_id:
@@ -135,21 +134,21 @@ def check_dates_before_current(current_date, individuals, families):
         if 'BIRT' in ind:
             birth_date = ind['BIRT']
             if birth_date > current_date:
-                errors.append(f"ERROR:(US01) - Individual {ind['ID']} has a birth date ({birth_date}) after the current date.")
+                errors.append(f"ERROR: (US01) - Individual {ind['ID']} has a birth date ({birth_date}) after the current date.")
         if 'DEAT' in ind:
             death_date = ind['DEAT']
             if death_date > current_date:
-                errors.append(f"ERROR:(US01) - Individual {ind['ID']} has a death date ({death_date}) after the current date.")
+                errors.append(f"ERROR: (US01) - Individual {ind['ID']} has a death date ({death_date}) after the current date.")
     
     for fam in families:
         if 'MARR' in fam:
             marriage_date = fam['MARR']
             if marriage_date > current_date:
-                errors.append(f"ERROR:(US01) - Family {fam['ID']} has a marriage date ({marriage_date}) after the current date.")
+                errors.append(f"ERROR: (US01) - Family {fam['ID']} has a marriage date ({marriage_date}) after the current date.")
         if 'DIV' in fam:
             divorce_date = fam['DIV']
             if divorce_date > current_date:
-                errors.append(f"ERROR:(US01) - Family {fam['ID']} has a divorce date ({divorce_date}) after the current date.")
+                errors.append(f"ERROR: (US01) - Family {fam['ID']} has a divorce date ({divorce_date}) after the current date.")
 
 #US07
 def check_death_age(individual):
@@ -171,6 +170,58 @@ def check_living_age(individual):
                 ((current_date.month, current_date.day) < (birth_date.month, birth_date.day))
             if age_at_current_date >= 150:
                 errors.append(f"ERROR: (US07) - Individual {ind['ID']} is alive and has an age of {age_at_current_date} years which is 150 years or more after birth.")
+
+
+
+#US02
+def check_birth_before_marriage(individuals, families):
+    family_marriage_dates = {fam['ID']: fam.get('MARR') for fam in families}
+
+    for ind in individuals:
+        if 'BIRT' in ind and 'FAMS' in ind:
+            birth_date = ind['BIRT']
+            family_ids = ind['FAMS']
+            for fam_id in family_ids:
+                marriage_date = family_marriage_dates.get(fam_id)
+                if marriage_date and birth_date > marriage_date:
+                    errors.append(f"ERROR: (US02) - Birth of individual {ind['ID']} occurred after their marriage in family {fam_id}.")
+
+#US03
+def check_birth_before_death(individuals):
+    for ind in individuals:
+        if 'BIRT' in ind and 'DEAT' in ind:
+            birth_date = ind['BIRT']
+            death_date = ind['DEAT']
+            if birth_date > death_date:
+                errors.append(f"ERROR: (US03) -  Birth of individual {ind['ID']} occurred after their death.")
+
+#US09
+def check_birth_before_parent_death(individuals, families):
+
+    birth_dates = {ind['ID']: ind.get('BIRT') for ind in individuals}
+    death_dates = {ind['ID']: ind.get('DEAT') for ind in individuals}
+
+    for family in families:
+        if 'CHIL' in family:
+            children = family['CHIL']
+            mother_id = family.get('WIFE')
+            father_id = family.get('HUSB')
+
+            mother_death_date = death_dates.get(mother_id)
+            father_death_date = death_dates.get(father_id)
+
+            for child_id in children:
+                birth_date = birth_dates.get(child_id)
+
+                if mother_death_date and birth_date and birth_date > mother_death_date:
+                    errors.append(f"ERROR: (US09) - Child {child_id} was born after the death of the mother {mother_id}.")
+
+                if father_death_date and birth_date:
+                    difference = (birth_date.year - father_death_date.year) * 12 + birth_date.month - father_death_date.month
+                    if difference > 9:
+                        errors.append(f"ERROR: (US09) - Child {child_id} was born more than 9 months after the death of the father {father_id}.")
+
+
 
 # US23
 def check_unique_name_birth(outfile):
@@ -220,7 +271,14 @@ def check_unique_family_by_spouses(outfile):
 
 
 
+# US08 - Birth before marriage of parents
+def birth_before_marriage(marr,birth_child):
+ 	return marr.year - birth_child.year - ((marr.month, marr.day) < (birth_child.month , birth_child.day)) >=  0
 
+def birth_before_divorce(birth_child, div):
+    div -= timedelta(weeks = 40)
+    return div.year - birth_child.year - ((div.month, div.day) < (birth_child.month, birth_child.day)) >= 0
+     
 
 # US25
 def family_output(names):
@@ -273,6 +331,81 @@ def age(today_date, person_information):
         person_information["ALIVE"] = True
 
     return person_information
+#US 14
+# Create a dictionary to store individuals' information
+individuals = {}
+
+# Function to add individual data to the dictionary
+def add_individual(indi_id, name, sex, birth_date, death_date=None, famc=None, fams=None):
+    individuals[indi_id] = {
+        "name": name,
+        "sex": sex,
+        "birth_date": birth_date,
+        "death_date": death_date,
+        "famc": famc,
+        "fams": fams
+    }
+
+# # Read data from the GEDCOM file
+# gedcom_file_path = "C:\Users\Anna\Desktop\sprint\ssw555-1\Kte.ged"  
+# with open(gedcom_file_path, "r") as gedcom_file:
+#     lines = gedcom_file.readlines()
+
+# # Process the GEDCOM data
+# current_individual_id = None
+# for line in lines:
+#     parts = line.strip().split()
+#     if len(parts) >= 2:
+#         level = int(parts[0])
+#         tag = parts[1]
+
+#         if level == 0:
+#             if tag == "@I" and parts[2].isdigit():
+#                 current_individual_id = parts[2]
+#             else:
+#                 current_individual_id = None
+#         elif level == 1 and current_individual_id:
+#             if tag == "NAME":
+#                 name = " ".join(parts[2:])
+#             elif tag == "SEX":
+#                 sex = parts[2]
+#             elif tag == "BIRT":
+#                 birth_date = None
+#             elif tag == "DEAT":
+#                 death_date = None
+#             elif tag == "FAMC":
+#                 famc = parts[2]
+#             elif tag == "FAMS":
+#                 fams = parts[2]
+
+#     elif current_individual_id:
+#         if tag == "DATE":
+#             date = " ".join(parts[2:])
+#             if "BIRT" in line:
+#                 birth_date = date
+#             elif "DEAT" in line:
+#                 death_date = date
+
+#         elif tag == "MARR":
+#             fams = parts[2]
+
+#     if current_individual_id and "BIRT" not in line and "DEAT" not in line:
+#         add_individual(current_individual_id, name, sex, birth_date, death_date, famc, fams)
+
+# # Print individuals' information
+# for indi_id, data in individuals.items():
+#     print(f"Individual ID: {indi_id}")
+#     print(f"Name: {data['name']}")
+#     print(f"Sex: {data['sex']}")
+#     print(f"Birth Date: {data['birth_date']}")
+#     if data['death_date']:
+#         print(f"Death Date: {data['death_date']}")
+#     if data['famc']:
+#         print(f"Child of Family: {data['famc']}")
+#     if data['fams']:
+#         print(f"Spouse in Family: {data['fams']}")
+#     print()
+
 #US 13
 def check_child_bdae(bdae_l):
     for i, bdae_l1 in enumerate(bdae_l):
@@ -374,8 +507,12 @@ def init():
             check_dates_before_current(current_date, individual, fams)
             check_death_age(individual)
             check_living_age(individual)
+            check_birth_before_marriage(individual,fams)
+            check_birth_before_death(individual)
+            check_birth_before_parent_death(individual,fams)
             list_upcoming_birthdays(current_date, individual)
-            list_upcoming_anniversaries(current_date, fams, individual)
+            list_upcoming_anniversaries(current_date, fams, individuals)
+
 
             # outfile.write('ERRORS\n')
             # for err in errors:
@@ -390,14 +527,16 @@ def init():
         ''')
         sys.exit()
 
-
-
-
     individual.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
     fams.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
+    #US29
+    list_deceased = []
 
     for per in individual:
         per = age(current_date, per)
+        #US29
+        if 'DEAT' in per:
+            list_deceased.append(per)
 
     for family in fams:
 
@@ -430,7 +569,7 @@ def init():
             errors.append("ERROR US10: Marriage" +wife['NAME']+" should be at least 14 years after birth of wife")
 
         if "CHIL" in family:
-            children_bdae_dates =[]
+            children_bdae_dates = []
             for chil_str in family["CHIL"]:
                 child_id = int(''.join(filter(str.isdigit, chil_str)))
                 child = search_id(individual, len(individual), 0, child_id)
@@ -438,6 +577,17 @@ def init():
                     raise Exception("Wife ID must exist.")
                 else:
                     family_names.append(child['NAME'])
+                children_bdae_dates.append(child['BIRT'])
+                childBirthdate = child['BIRT']
+                
+                #US 08 Birth before the marriage of parents(and no more than 9 months after their divorce)
+                if "DIV" in family:
+                    divorce = family["DIV"]
+                    if birth_before_divorce(divorce, childBirthdate):
+                        errors.append("ERROR: US08: " + family["ID"] + ": Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + " should be no more than 9 months after the divorce of the parents on " + mdae.strftime("%x") + ".")
+                else:
+                    if birth_before_marriage(mdae, childBirthdate):
+                        errors.append("ERROR: US08: " + family["ID"] + ": Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + " should be after marriage " + mdae.strftime("%x") + ".")
 
             if not check_child_bdae(children_bdae_dates):
                 errors.append("ERROR US 10: Birth dates of siblings should be more than 8 months apart or less than 2 days apart.")    
@@ -451,6 +601,10 @@ def init():
     outfile.write(tabulate(individual, headers="keys", tablefmt="github"))
     outfile.write('\n\n')
     outfile.write(tabulate(fams, headers="keys", tablefmt="github"))
+    outfile.write('\n\n')
+    #US29
+    outfile.write('US 29: List of people deceased\n')
+    outfile.write(tabulate(list_deceased, headers="keys", tablefmt="github"))
     outfile.write('\n\n')
 
     outfile.write('ERRORS\n')
