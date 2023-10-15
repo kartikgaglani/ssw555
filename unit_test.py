@@ -55,16 +55,16 @@ class TestUserStoryEight(unittest.TestCase):
 		birth = date.today()
 		marriage = birth + timedelta(days = 365)
 		print("US08 - Birth before the marriage of parents")
-		print("Birth :" ,birth," Marriage : ",marriage, compareDates(birth, marriage))
-		self.assertFalse(compareDates(marriage, birth))
+		print("Birth :" ,birth," Marriage : ",marriage, birth_before_marriage(birth, marriage))
+		self.assertTrue(birth_before_marriage(marriage, birth))
 
 	def test_birth_after_marr(self):
 		print()
 		birth = date.today()
 		marriage = birth - timedelta(days = 365)
 		print("US08 - Birth before the marriage of parents")
-		print("Birth :" ,birth," Marriage : ", marriage, compareDates(birth, marriage))
-		self.assertTrue(compareDates(marriage, birth))
+		print("Birth :" ,birth," Marriage : ", marriage, birth_before_marriage(birth, marriage))
+		self.assertFalse(birth_before_marriage(marriage, birth))
 	
 	def test_birth_div(self):
 		print()
@@ -72,13 +72,13 @@ class TestUserStoryEight(unittest.TestCase):
 		divorce = birth - timedelta(days = 270)
 		print("US08 - Birth before the marriage of parents (no more than 9 months after their divorce)")
 
-		print("Birth :" ,birth," Divorce : ", divorce, compareDates(birth, divorce))
-		self.assertTrue(compareDates(birth, divorce + timedelta(days = 270)))
+		print("Birth :" ,birth," Divorce : ", divorce, birth_before_divorce(birth, divorce))
+		self.assertFalse(birth_before_divorce(birth, divorce + timedelta(days = 270)))
 	
 	def test_birth_div_after(self):
 		print()
 		birth = date.today()
 		divorce = birth - timedelta(days = 365)
 		print("US08 - Birth before the marriage of parents (no more than 9 months after their divorce)")
-		print("Birth :" ,birth," Divorce : ", divorce, compareDates(birth, divorce))
-		self.assertFalse(compareDates(birth, divorce + timedelta(days = 270)))
+		print("Birth :" ,birth," Divorce : ", divorce, birth_before_divorce(birth, divorce))
+		self.assertFalse(birth_before_divorce(birth, divorce + timedelta(days = 270)))

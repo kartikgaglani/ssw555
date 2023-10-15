@@ -531,6 +531,39 @@ def init():
     fams.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
     #US29
     list_deceased = []
+    upcoming_birthdays = []
+
+    for ind in individual:
+        if 'BIRT' in ind and 'DEAT' not in ind:
+            birth_date = ind['BIRT']
+            days_until_birthday = (birth_date.replace(year=current_date.year) - current_date).days
+            if 0 < days_until_birthday <= 30:
+                upcoming_birthdays.append((ind['NAME'], birth_date))
+
+    if len(upcoming_birthdays)==0:
+        errors.append("Error 38: No upcoming birthdays in the next 30 days.")
+    upcoming_anniversaries = []
+
+    for fam in fams:
+        if 'MARR' in fam:
+            marriage_date = fam['MARR']
+            anniversary_date = marriage_date.replace(year=current_date.year)
+            #print(anniversary_date)
+            if anniversary_date >= current_date:
+                days_until_anniversary = (anniversary_date - current_date).days
+                #print(current_date)
+                if 0 <= days_until_anniversary <= 30:
+                    husband_id = int(''.join(filter(str.isdigit, fam['HUSB'])))
+                    wife_id = int(''.join(filter(str.isdigit, fam['WIFE'])))
+                    
+                    husband = search_id(individuals, len(individuals), 0, husband_id)
+                    wife = search_id(individuals, len(individuals), 0, wife_id)
+
+                    if husband['ALIVE'] and wife['ALIVE']:
+                        upcoming_anniversaries.append((husband['NAME'], wife['NAME'], anniversary_date))
+    if len(upcoming_anniversaries)==0:
+        errors.append("Error 39: No upcoming anniversaries in the next 30 days for living couples.")
+
 
     for per in individual:
         per = age(current_date, per)
@@ -605,6 +638,12 @@ def init():
     #US29
     outfile.write('US 29: List of people deceased\n')
     outfile.write(tabulate(list_deceased, headers="keys", tablefmt="github"))
+    outfile.write('\n\n')
+    outfile.write('US 38\n')
+    outfile.write(tabulate(upcoming_birthdays, headers="keys", tablefmt="github"))
+    outfile.write('\n\n')
+    outfile.write('US 39\n')
+    outfile.write(tabulate(upcoming_anniversaries, headers="keys", tablefmt="github"))
     outfile.write('\n\n')
 
     outfile.write('ERRORS\n')

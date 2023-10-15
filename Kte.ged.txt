@@ -41,6 +41,14 @@ US 29: List of people deceased
 | @I14@ | Tarak /Bhide/   | M     | 1902-12-15 | 1983-11-12 | ['@F5@']         |    80 | False   |        |
 | @I16@ | Babita /Naik/   | F     | 1963-12-27 | 2008-09-25 | ['@F7@']         |    44 | False   |        |
 
+US 38
+| 0           | 1          |
+|-------------|------------|
+| Ajay /Naik/ | 2002-10-16 |
+
+US 39
+
+
 ERRORS
 ERROR: US23 - Individuals with the same name and birth date found: Anjali /Naik/, Birth Date: 2024-05-03
 ERROR: (US01) - Individual @I10@ has a birth date (2024-05-03) after the current date.
@@ -50,6 +58,7 @@ ERROR: (US02) - Birth of individual @I10@ occurred after their marriage in famil
 ERROR: (US03) -  Birth of individual @I10@ occurred after their death.
 ERROR: (US09) - Child @I10@ was born after the death of the mother @I9@.
 ERROR: (US09) - Child @I10@ was born more than 9 months after the death of the father @I8@.
+Error 39: No upcoming anniversaries in the next 30 days for living couples.
 ERROR US10: MarriageSandip /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageSandhya /Naik/ should be at least 14 years after birth of wife
 ERROR US10: MarriageTulsidas /More/should be at least 14 years after birth of husband
