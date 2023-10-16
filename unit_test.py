@@ -1,6 +1,36 @@
 import unittest
+from datetime import date, datetime, timedelta
+current_date = date.today()
+
 
 from file1 import *
+
+#US01
+def check_dates_before_current(current_date, individuals, families):
+    errors = []
+
+    for ind in individuals:
+        if 'BIRT' in ind:
+            birth_date = ind['BIRT']
+            if birth_date > current_date:
+                errors.append(f"ERROR:(US01) - Individual {ind['ID']} has a birth date ({birth_date}) after the current date.")
+        if 'DEAT' in ind:
+            death_date = ind['DEAT']
+            if death_date > current_date:
+                errors.append(f"ERROR:(US01) - Individual {ind['ID']} has a death date ({death_date}) after the current date.")
+
+    for fam in families:
+        if 'MARR' in fam:
+            marriage_date = fam['MARR']
+            if marriage_date > current_date:
+                errors.append(f"ERROR:(US01) - Family {fam['ID']} has a marriage date ({marriage_date}) after the current date.")
+        if 'DIV' in fam:
+            divorce_date = fam['DIV']
+            if divorce_date > current_date:
+                errors.append(f"ERROR:(US01) - Family {fam['ID']} has a divorce date ({divorce_date}) after the current date.")
+
+    return errors
+
 
 #US02
 def check_birth_before_marriage(individuals, families, errors):
@@ -24,6 +54,81 @@ def check_birth_before_death(individuals,errors):
             if birth_date > death_date:
                 errors.append(f"ERROR: (US03) -  Birth of individual {ind['ID']} occurred after their death.")
 
+#US07
+def check_death_age(individual,errors):
+	for ind in individual:
+          if 'BIRT' in ind and 'DEAT' in ind:
+            birth_date = ind['BIRT']
+            death_date = ind['DEAT']
+            age_at_death = death_date.year - birth_date.year - \
+                ((death_date.month, death_date.day) < (birth_date.month, birth_date.day))
+            if age_at_death >= 150:
+                errors.append(f"ERROR: (US07) - Individual {ind['ID']} has a death age of {age_at_death} years which is 150 years or more after birth.")
+
+#US07
+def check_living_age(individual,errors):
+    for ind in individual:
+        if 'BIRT' in ind and 'DEAT' not in ind:
+            birth_date = ind['BIRT']
+            age_at_current_date = current_date.year - birth_date.year - \
+                ((current_date.month, current_date.day) < (birth_date.month, birth_date.day))
+            if age_at_current_date >= 150:
+                errors.append(f"ERROR: (US07) - Individual {ind['ID']} is alive and has an age of {age_at_current_date} years which is 150 years or more after birth.")
+
+
+class TestUserStory01(unittest.TestCase):
+
+    def test_dates_before_current(self):
+        # All dates are before the current date
+        individuals = [{'ID': 'I1', 'BIRT': date(2000, 1, 1), 'DEAT': date(2010, 12, 31)}]
+        families = [{'ID': 'F1', 'MARR': date(1995, 6, 15), 'DIV': date(2005, 3, 20)}]
+        current_date = date.today()
+        errors = check_dates_before_current(current_date, individuals, families)
+        print()
+        print("US01: All dates before current date (All days before current date testcase)")
+        self.assertEqual(errors, [], "All dates are before the current date")
+
+    def test_birth_after_current_date(self):
+        # Birth date is after the current date
+        individuals = [{'ID': 'I1', 'BIRT': date(2028, 1, 1)}]
+        families = []
+        current_date = date.today()        
+        errors = check_dates_before_current(current_date, individuals, families)
+        print()
+        print("US01: All dates before current date (Birth date after current date testcase)")
+        self.assertTrue(len(errors) > 0, "Birth date after the current date should raise an error")
+
+    def test_marriage_after_current_date(self):
+        # Marriage date is after the current date
+        individuals = []
+        families = [{'ID': 'F1', 'MARR': date(2025, 6, 15)}]
+        current_date = date.today()
+        errors = check_dates_before_current(current_date, individuals, families)
+        print()
+        print("US01: All dates before current date (Marriage date after current date testcase)")
+        self.assertFalse(len(errors) == 0, "Marriage date after the current date should raise an error")
+
+    def test_death_after_current_date(self):
+        # Death date is after the current date
+        individuals = [{'ID': 'I1', 'BIRT': date(1980, 1, 1), 'DEAT': date(2026, 6, 15)}]
+        families = []        
+        current_date = date.today()
+        errors = check_dates_before_current(current_date, individuals, families)
+        print()
+        print("US01: All dates before current date (Death date after current date testcase)")
+        self.assertNotEqual(len(errors),0, "Death date after the current date should raise an error")
+
+    def test_valid_no_dates(self):
+        # No dates provided
+        individuals = []
+        families = []
+        current_date = date.today()
+        errors = check_dates_before_current(current_date, individuals, families)
+        print()
+        print("US01: All dates before current date (No dates given testcase)")
+        self.assertEqual(errors, [], "No dates provided should not raise an error")
+
+
 class TestUserStory02(unittest.TestCase):
     def test_us02_birth_before_marriage(self):
         individuals = [
@@ -46,8 +151,32 @@ class TestUserStory02(unittest.TestCase):
         actual = len(errors)
         expected = 0
         print()
-        print("US02: Birth Before Marriage.")
+        print("US02: Birth Before marriage (Birth date before marriage date testcase)")
         self.assertEqual(actual, expected)
+        
+    def test_us02_birth_after_marriage(self):
+        individuals = [
+            {
+                'ID': 'I1',
+                'BIRT': '2020-01-01',
+                'FAMS': ['F1'],
+            },
+        ]
+
+        families = [
+            {
+                'ID': 'F1',
+                'MARR': '2015-01-01',
+            },
+        ]
+
+        errors = []
+        check_birth_before_marriage(individuals, families, errors)
+        actual = len(errors)
+        expected = 0
+        print()
+        print("US02: Birth Before marriage (Birth date after marriage date testcase)")
+        self.assertNotEqual(actual, expected)
 
 class TestUserStory03(unittest.TestCase):
     def test_us03_birth_before_death(self):
@@ -64,8 +193,64 @@ class TestUserStory03(unittest.TestCase):
         actual = len(errors)
         expected = 0
         print()
-        print("US03: Birth before death")
+        print("US03: Birth before death (Birth date before death date testcase)")
         self.assertEqual(actual, expected)
+        
+    def test_us03_birth_after_death(self):
+        individuals = [
+            {
+                'ID': 'I1',
+                'BIRT': '2000-01-01',
+                'DEAT': '1990-01-01',
+            },
+        ]
+
+        errors = []
+        check_birth_before_death(individuals, errors)
+        actual = len(errors)
+        expected = 0
+        print()
+        print("US03: Birth before death (Birth date after death date testcase)")
+        self.assertNotEqual(actual, expected)
+
+class TestUserStory07(unittest.TestCase):
+    def test_us07_death_age(self):
+        individuals = [
+            {
+                'ID': 'I1',
+                'BIRT': datetime(1950, 1, 1),
+                'DEAT': datetime(2005, 2, 1),
+            },
+            {
+                'ID': 'I2',
+                'BIRT': datetime(1900, 3, 15),
+                'DEAT': datetime(2055, 5, 20),
+            },
+        ]
+
+        errors = []
+        print()
+        print("US07: Age less than 150 (Death Age testcase)")
+        check_death_age(individuals,errors)
+        self.assertEqual(len(errors), 1, "US07: One error should be found")
+
+    def test_us07_living_age(self):
+        individuals = [
+            {
+                'ID': 'I1',
+                'BIRT': datetime(1970, 12, 10),
+            },
+            {
+                'ID': 'I2',
+                'BIRT': datetime(1995, 4, 5),
+            },
+        ]
+        errors = []
+        print()
+        print("US07: Age less than 150 (Live Age testcase)")
+        check_living_age(individuals,errors)
+        self.assertEqual(len(errors), 0, "US07: One error should be found")
+
 
 class TestUserStoryTwentyFive(unittest.TestCase):
 	
