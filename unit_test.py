@@ -2,6 +2,70 @@ import unittest
 
 from file1 import *
 
+#US02
+def check_birth_before_marriage(individuals, families, errors):
+    family_marriage_dates = {fam['ID']: fam.get('MARR') for fam in families}
+
+    for ind in individuals:
+        if 'BIRT' in ind and 'FAMS' in ind:
+            birth_date = ind['BIRT']
+            family_ids = ind['FAMS']
+            for fam_id in family_ids:
+                marriage_date = family_marriage_dates.get(fam_id)
+                if marriage_date and birth_date > marriage_date:
+                    errors.append(f"ERROR: (US02) - Birth of individual {ind['ID']} occurred after their marriage in family {fam_id}.")
+
+#US03
+def check_birth_before_death(individuals,errors):
+    for ind in individuals:
+        if 'BIRT' in ind and 'DEAT' in ind:
+            birth_date = ind['BIRT']
+            death_date = ind['DEAT']
+            if birth_date > death_date:
+                errors.append(f"ERROR: (US03) -  Birth of individual {ind['ID']} occurred after their death.")
+
+class TestUserStory02(unittest.TestCase):
+    def test_us02_birth_before_marriage(self):
+        individuals = [
+            {
+                'ID': 'I1',
+                'BIRT': '2000-01-01',
+                'FAMS': ['F1'],
+            },
+        ]
+
+        families = [
+            {
+                'ID': 'F1',
+                'MARR': '2015-01-01',
+            },
+        ]
+
+        errors = []
+        check_birth_before_marriage(individuals, families, errors)
+        actual = len(errors)
+        expected = 0
+        print()
+        print("US02: Birth Before Marriage.")
+        self.assertEqual(actual, expected)
+
+class TestUserStory03(unittest.TestCase):
+    def test_us03_birth_before_death(self):
+        individuals = [
+            {
+                'ID': 'I1',
+                'BIRT': '2000-01-01',
+                'DEAT': '2020-01-01',
+            },
+        ]
+
+        errors = []
+        check_birth_before_death(individuals, errors)
+        actual = len(errors)
+        expected = 0
+        print()
+        print("US03: Birth before death")
+        self.assertEqual(actual, expected)
 
 class TestUserStoryTwentyFive(unittest.TestCase):
 	
@@ -82,3 +146,6 @@ class TestUserStoryEight(unittest.TestCase):
 		print("US08 - Birth before the marriage of parents (no more than 9 months after their divorce)")
 		print("Birth :" ,birth," Divorce : ", divorce, birth_before_divorce(birth, divorce))
 		self.assertFalse(birth_before_divorce(birth, divorce + timedelta(days = 270)))
+
+if __name__ == '__main__':
+    unittest.main()

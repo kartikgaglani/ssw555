@@ -3,7 +3,7 @@
 | @I1@  | Dev /Naik/       | M     | 1995-04-19 | @F1@   |    28 | True    |                  |            |
 | @I2@  | Sandhya /Naik/   | F     | 1968-12-08 | @F2@   |    54 | True    | ['@F1@']         |            |
 | @I3@  | Sandip /Naik/    | M     | 1964-04-05 | @F3@   |    59 | True    | ['@F1@']         |            |
-| @I4@  | Ajay /Naik/      | M     | 2002-10-16 | @F1@   |    20 | True    |                  |            |
+| @I4@  | Ajay /Naik/      | M     | 2002-10-16 | @F1@   |    21 | True    |                  |            |
 | @I5@  | Kashibai /More/  | F     | 1940-04-01 |        |    61 | False   | ['@F2@']         | 2001-10-18 |
 | @I6@  | Tulsidas /More/  | M     | 1940-01-29 |        |    70 | False   | ['@F2@']         | 2010-09-24 |
 | @I7@  | Vaishnavi /More/ | F     | 1971-01-07 | @F2@   |    52 | True    |                  |            |
@@ -42,9 +42,7 @@ US 29: List of people deceased
 | @I16@ | Babita /Naik/   | F     | 1963-12-27 | 2008-09-25 | ['@F7@']         |    44 | False   |        |
 
 US 38
-| 0           | 1          |
-|-------------|------------|
-| Ajay /Naik/ | 2002-10-16 |
+
 
 US 39
 
@@ -58,6 +56,7 @@ ERROR: (US02) - Birth of individual @I10@ occurred after their marriage in famil
 ERROR: (US03) -  Birth of individual @I10@ occurred after their death.
 ERROR: (US09) - Child @I10@ was born after the death of the mother @I9@.
 ERROR: (US09) - Child @I10@ was born more than 9 months after the death of the father @I8@.
+Error 38: No upcoming birthdays in the next 30 days.
 Error 39: No upcoming anniversaries in the next 30 days for living couples.
 ERROR US10: MarriageSandip /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageSandhya /Naik/ should be at least 14 years after birth of wife
