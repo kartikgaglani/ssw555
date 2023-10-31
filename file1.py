@@ -15,3 +15,9 @@ def birth_before_marriage(marr,birth_child):
 def birth_before_divorce(birth_child, div):
     div -= timedelta(weeks = 40)
     return div.year - birth_child.year - ((div.month, div.day) < (birth_child.month, birth_child.day)) >= 0
+
+#US12 parents are too old
+def compareDates(earlierDate, laterDate):
+	return laterDate.year - earlierDate.year - ((laterDate.month, laterDate.day) < (earlierDate.month, earlierDate.day)) >= 0
+def Parentstooold(childBirthdate, parentBirthdate, years):
+    return compareDates(childBirthdate, parentBirthdate + timedelta(days = years * 365.25))

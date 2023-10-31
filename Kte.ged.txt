@@ -45,7 +45,17 @@ US 38
 
 
 US 39
+| ID   | HUSB          | WIFE            | CHIL              | MARR       |
+|------|---------------|-----------------|-------------------|------------|
+| @F3@ | Mahesh /Naik/ | Anjali /Naik/   | ['@I10@', '@I3@'] | 1960-12-28 |
+| @F5@ | Tarak /Bhide/ | Madhavi /Bhide/ | ['@I9@']          | 1932-11-17 |
+| @F6@ | Anjali /Naik/ | Sonika /Naik/   |                   | 2011-12-26 |
+| @F7@ | Anjali /Naik/ | Babita /Naik/   |                   | 2011-12-26 |
 
+US 33
+| ID    | NAME          | SEX   | BIRT       | DEAT       | FAMC   | FAMS             |   AGE | ALIVE   |
+|-------|---------------|-------|------------|------------|--------|------------------|-------|---------|
+| @I10@ | Anjali /Naik/ | M     | 2024-05-03 | 2016-01-08 | @F3@   | ['@F6@', '@F7@'] |    -9 | False   |
 
 ERRORS
 ERROR: US23 - Individuals with the same name and birth date found: Anjali /Naik/, Birth Date: 2024-05-03
@@ -57,13 +67,14 @@ ERROR: (US03) -  Birth of individual @I10@ occurred after their death.
 ERROR: (US09) - Child @I10@ was born after the death of the mother @I9@.
 ERROR: (US09) - Child @I10@ was born more than 9 months after the death of the father @I8@.
 Error 38: No upcoming birthdays in the next 30 days.
-Error 39: No upcoming anniversaries in the next 30 days for living couples.
 ERROR US10: MarriageSandip /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageSandhya /Naik/ should be at least 14 years after birth of wife
 ERROR US10: MarriageTulsidas /More/should be at least 14 years after birth of husband
 ERROR US10: MarriageKashibai /More/ should be at least 14 years after birth of wife
 ERROR US10: MarriageMahesh /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageAnjali /Naik/ should be at least 14 years after birth of wife
+ERROR: FAMILY: US12: @F3@: BIRT of father on 09/30/32 should be less than 80 years that of Child @I10@: BIRT 05/03/24.
+ERROR: FAMILY: US12: @F3@: BIRT of mother on 07/31/31 should be less than 60 years that of Child @I10@: BIRT 05/03/24.
 ERROR US25: @F3@: First names of individuals in the family cannot be same.
 ERROR US10: MarriageTukaram /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageGeeta /Naik/ should be at least 14 years after birth of wife

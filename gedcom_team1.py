@@ -222,14 +222,14 @@ def check_birth_before_parent_death(individuals, families):
                         errors.append(f"ERROR: (US09) - Child {child_id} was born more than 9 months after the death of the father {father_id}.")
 
 # Story Id: US15
-def fewer_than_15_siblings(families):
-    invalid = False
-    for family_id, family_data in families.items():
-        siblings = get_all_individual_data_by_key(families, family_id, 'CHIL')
-        if len(siblings) > 15:
-            invalid = True
-            print(f"ERROR: US15: Family has more than 15 siblings")
-    return invalid
+# def fewer_than_15_siblings(families):
+#     invalid = False
+#     for family_id, family_data in families.items():
+#         siblings = get_all_individual_data_by_key(families, family_id, 'CHIL')
+#         if len(siblings) > 15:
+#             invalid = True
+#             print(f"ERROR: US15: Family has more than 15 siblings")
+#     return invalid
 
 # US23
 def check_unique_name_birth(outfile):
@@ -340,6 +340,13 @@ def age(today_date, person_information):
 
     return person_information
 
+#US12
+#US12 parents are too old
+def compareDates(earlierDate, laterDate):
+	return laterDate.year - earlierDate.year - ((laterDate.month, laterDate.day) < (earlierDate.month, earlierDate.day)) >= 0
+def Parentstooold(childBirthdate, parentBirthdate, years):
+    return compareDates(childBirthdate, parentBirthdate + timedelta(days = years * 365.25))
+
 #US 13
 def check_child_bdae(bdae_l):
     for i, bdae_l1 in enumerate(bdae_l):
@@ -444,8 +451,7 @@ def init():
             check_birth_before_marriage(individual,fams)
             check_birth_before_death(individual)
             check_birth_before_parent_death(individual,fams)
-            list_upcoming_birthdays(current_date, individual)
-            list_upcoming_anniversaries(current_date, fams, individuals)
+            
 
 
             # outfile.write('ERRORS\n')
@@ -466,6 +472,7 @@ def init():
     #US29
     list_deceased = []
     upcoming_birthdays = []
+    orphans = []
 
     for ind in individual:
         if 'BIRT' in ind and 'DEAT' not in ind:
@@ -478,23 +485,16 @@ def init():
         errors.append("Error 38: No upcoming birthdays in the next 30 days.")
     upcoming_anniversaries = []
 
-    for fam in fams:
-        if 'MARR' in fam:
-            marriage_date = fam['MARR']
-            anniversary_date = marriage_date.replace(year=current_date.year)
-            #print(anniversary_date)
-            if anniversary_date >= current_date:
-                days_until_anniversary = (anniversary_date - current_date).days
-                #print(current_date)
-                if 0 <= days_until_anniversary <= 30:
-                    husband_id = int(''.join(filter(str.isdigit, fam['HUSB'])))
-                    wife_id = int(''.join(filter(str.isdigit, fam['WIFE'])))
-                    
-                    husband = search_id(individuals, len(individuals), 0, husband_id)
-                    wife = search_id(individuals, len(individuals), 0, wife_id)
+    today = date.today()
+    result=[]
+    for family in fams:
+        
+        user=family['MARR']
+     
+        curr_annv = date(today.year, user.month, user.day)
 
-                    if husband['ALIVE'] and wife['ALIVE']:
-                        upcoming_anniversaries.append((husband['NAME'], wife['NAME'], anniversary_date))
+        if(curr_annv>today):
+            upcoming_anniversaries.append(family)
     if len(upcoming_anniversaries)==0:
         errors.append("Error 39: No upcoming anniversaries in the next 30 days for living couples.")
 
@@ -546,6 +546,16 @@ def init():
                     family_names.append(child['NAME'])
                 children_bdae_dates.append(child['BIRT'])
                 childBirthdate = child['BIRT']
+
+                #US 33
+                if 'DEAT' in husband and 'DEAT' in wife and child['AGE'] < 18:
+                    orphans.append(child)
+
+                #US12
+                if not Parentstooold(childBirthdate, husband["BIRT"], 80):
+                    errors.append("ERROR: FAMILY: US12: " + family["ID"] + ": BIRT of father on " + husband["BIRT"].strftime("%x") + " should be less than 80 years that of Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + ".")
+                if not Parentstooold(childBirthdate, husband["BIRT"], 60):
+                    errors.append("ERROR: FAMILY: US12: " + family["ID"] + ": BIRT of mother on " + wife["BIRT"].strftime("%x") + " should be less than 60 years that of Child " + chil_str + ": BIRT " + childBirthdate.strftime("%x") + ".")
                 
                 #US 08 Birth before the marriage of parents(and no more than 9 months after their divorce)
                 if "DIV" in family:
@@ -578,6 +588,9 @@ def init():
     outfile.write('\n\n')
     outfile.write('US 39\n')
     outfile.write(tabulate(upcoming_anniversaries, headers="keys", tablefmt="github"))
+    outfile.write('\n\n')
+    outfile.write('US 33\n')
+    outfile.write(tabulate(orphans, headers="keys", tablefmt="github"))
     outfile.write('\n\n')
 
     outfile.write('ERRORS\n')

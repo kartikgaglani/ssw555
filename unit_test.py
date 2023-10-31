@@ -331,6 +331,16 @@ class TestUserStoryEight(unittest.TestCase):
 		print("US08 - Birth before the marriage of parents (no more than 9 months after their divorce)")
 		print("Birth :" ,birth," Divorce : ", divorce, birth_before_divorce(birth, divorce))
 		self.assertFalse(birth_before_divorce(birth, divorce + timedelta(days = 270)))
+          
+#US12 - people too old
+class TestUserStoryTwelve(unittest.TestCase):
+	def testParentstoooldtest(self):
+		print()
+		today_date = date.today()
+		testDate = today_date + timedelta(days = 90 * 365.25)
+		result = Parentstooold(today_date,testDate,90)
+		print("US12 - Parents too old : ", result)
+		self.assertTrue(result)
 
 if __name__ == '__main__':
     unittest.main()
