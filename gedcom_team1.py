@@ -422,6 +422,75 @@ def list_upcoming_anniversaries(current_date, families, individuals):
         print("No upcoming anniversaries in the next 30 days for living couples.")
 
 
+# US20: Aunts and uncles should not marry their nieces or nephews
+def aunts_and_uncles_marriage(individual, fams):
+    niece_nephew_marriages = []
+
+    for family in fams:
+        if 'HUSB' in family and 'WIFE' in family:
+            husband_id = family['HUSB']
+            wife_id = family['WIFE']
+            
+            husband = [ind for ind in individual if ind['ID'] == husband_id][0]
+            wife = [ind for ind in individual if ind['ID'] == wife_id][0]
+
+            # Finding the family of the husband (uncle)
+            husband_family = [fam for fam in fams if 'CHIL' in fam and husband_id in fam['CHIL']]
+
+            # Finding the family of the wife (aunt)
+            wife_family = [fam for fam in fams if 'CHIL' in fam and wife_id in fam['CHIL']]
+
+            for h_family in husband_family:
+                for w_family in wife_family:
+                    if h_family['ID'] == w_family['ID']:
+                        if husband['SEX'] == 'M':
+                            uncles_family = h_family
+                            aunts_family = w_family
+                        else:
+                            uncles_family = w_family
+                            aunts_family = h_family
+                        
+                        uncles_children = uncles_family.get('CHIL', [])
+                        
+                        if wife_id in uncles_children:
+                            error = f"ERROR: US20 - {husband['NAME']} (ID: {husband_id}) and {wife['NAME']} (ID: {wife_id}) are married, and they are related as aunt/uncle and niece/nephew."
+                            niece_nephew_marriages.append(error)
+    
+    return niece_nephew_marriages
+
+
+#us 16
+def male_last_names_same_family(individual, fams):
+    last_name_errors = []
+
+    for family in fams:
+        if 'HUSB' in family:
+            husband_id = family['HUSB']
+            husband = [ind for ind in individual if ind['ID'] == husband_id][0]
+            husband_gender = husband.get('SEX')
+            husband_last_name = husband.get('NAME').split()[-1]
+
+            if husband_gender == 'M':
+                for child_id in family.get('CHIL', []):
+                    child = [ind for ind in individual if ind['ID'] == child_id][0]
+                    if child.get('SEX') == 'M':
+                        child_last_name = child.get('NAME').split()[-1]
+                        if husband_last_name != child_last_name:
+                            error = f"ERROR: US39 - All male members in the family (e.g., {husband['NAME']} and {child['NAME']}) should have the same last name."
+                            last_name_errors.append(error)
+
+    return last_name_errors
+    
+
+
+
+
+
+
+
+
+
+
 def init():
     try:
         current_date = date.today()
@@ -450,7 +519,6 @@ def init():
             check_living_age(individual)
             check_birth_before_marriage(individual,fams)
             check_birth_before_death(individual)
-            check_birth_before_parent_death(individual,fams)
             
 
 
