@@ -195,6 +195,43 @@ def check_birth_before_death(individuals):
             if birth_date > death_date:
                 errors.append(f"ERROR: (US03) -  Birth of individual {ind['ID']} occurred after their death.")
 
+#US04
+def check_marriage_before_divorce(families):
+    for family in families:
+        if 'MARR' in family and 'DIV' in family:
+            marriage_date = family['MARR']
+            divorce_date = family['DIV']
+
+            if marriage_date > divorce_date:
+                errors.append(f"ERROR: (US04) - Marriage (MARR) date in family {family['ID']} occurs after the divorce (DIV) date.")
+
+
+#US05
+def check_marriage_before_death(families, individuals):
+    for family in families:
+        if 'MARR' in family:
+            marriage_date = family['MARR']
+            husband_id = family.get('HUSB')
+            wife_id = family.get('WIFE')
+
+            # Check husband's death date if available
+            if husband_id:
+                husband = next((ind for ind in individuals if ind['ID'] == husband_id), None)
+                if husband and 'DEAT' in husband:
+                    husband_death_date = husband['DEAT']
+                    if husband_death_date < marriage_date:
+                        errors.append(f"ERROR: (US05) - Marriage (MARR) date in family {family['ID']} occurs after the death of husband {husband['ID']}.")
+
+            # Check wife's death date if available
+            if wife_id:
+                wife = next((ind for ind in individuals if ind['ID'] == wife_id), None)
+                if wife and 'DEAT' in wife:
+                    wife_death_date = wife['DEAT']
+                    if wife_death_date < marriage_date:
+                        errors.append(f"ERROR: (US05) - Marriage (MARR) date in family {family['ID']} occurs after the death of wife {wife['ID']}.")
+
+
+
 #US09
 def check_birth_before_parent_death(individuals, families):
 
@@ -519,6 +556,8 @@ def init():
             check_living_age(individual)
             check_birth_before_marriage(individual,fams)
             check_birth_before_death(individual)
+            check_marriage_before_divorce(fams)
+            check_marriage_before_death(fams,individual)
             
 
 

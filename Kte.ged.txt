@@ -19,7 +19,7 @@
 
 | ID   | WIFE            | HUSB            | CHIL              | MARR       | DIV        |
 |------|-----------------|-----------------|-------------------|------------|------------|
-| @F1@ | Sandhya /Naik/  | Sandip /Naik/   | ['@I1@', '@I4@']  | 1995-05-30 | 2005-02-06 |
+| @F1@ | Sandhya /Naik/  | Sandip /Naik/   | ['@I1@', '@I4@']  | 1995-05-30 | 1985-02-06 |
 | @F2@ | Kashibai /More/ | Tulsidas /More/ | ['@I2@', '@I7@']  | 1965-04-21 |            |
 | @F3@ | Anjali /Naik/   | Mahesh /Naik/   | ['@I10@', '@I3@'] | 1960-12-28 |            |
 | @F4@ | Geeta /Naik/    | Tukaram /Naik/  | ['@I8@']          | 1930-08-04 |            |
@@ -64,9 +64,13 @@ ERROR: (US07) - Individual @I11@ has a death age of 284 years which is 150 years
 ERROR: (US02) - Birth of individual @I10@ occurred after their marriage in family @F6@.
 ERROR: (US02) - Birth of individual @I10@ occurred after their marriage in family @F7@.
 ERROR: (US03) -  Birth of individual @I10@ occurred after their death.
+ERROR: (US04) - Marriage (MARR) date in family @F1@ occurs after the divorce (DIV) date.
+ERROR: (US05) - Marriage (MARR) date in family @F7@ occurs after the death of wife @I16@.
 Error 38: No upcoming birthdays in the next 30 days.
 ERROR US10: MarriageSandip /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageSandhya /Naik/ should be at least 14 years after birth of wife
+ERROR: US08: @F1@: Child @I1@: BIRT 04/19/95 should be no more than 9 months after the divorce of the parents on 05/30/95.
+ERROR: US08: @F1@: Child @I4@: BIRT 10/16/02 should be no more than 9 months after the divorce of the parents on 05/30/95.
 ERROR US10: MarriageTulsidas /More/should be at least 14 years after birth of husband
 ERROR US10: MarriageKashibai /More/ should be at least 14 years after birth of wife
 ERROR US10: MarriageMahesh /Naik/should be at least 14 years after birth of husband
