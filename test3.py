@@ -34,7 +34,7 @@ def sibling_should_not_marry(families):
 class TestNoMarriage(unittest.TestCase):
     
     def test_valid_marriage(self):
-        # Test a valid marriage between non-descendants
+        # Test a valid marriage between non-descendant
         self.assertTrue(self.validator.is_marriage_valid("I2", "I3"))
 
     def test_invalid_marriage(self):
