@@ -54,6 +54,43 @@ def check_birth_before_death(individuals,errors):
             if birth_date > death_date:
                 errors.append(f"ERROR: (US03) -  Birth of individual {ind['ID']} occurred after their death.")
 
+#US04
+def check_marriage_before_divorce(families,errors):
+    for family in families:
+        if 'MARR' in family and 'DIV' in family:
+            marriage_date = family['MARR']
+            divorce_date = family['DIV']
+
+            if marriage_date > divorce_date:
+                errors.append(f"ERROR: (US04) - Marriage (MARR) date in family {family['ID']} occurs after the divorce (DIV) date.")
+
+
+#US05
+def check_marriage_before_death(families, individuals,errors):
+    for family in families:
+        if 'MARR' in family:
+            marriage_date = family['MARR']
+            husband_id = family.get('HUSB')
+            wife_id = family.get('WIFE')
+
+            # Check husband's death date if available
+            if husband_id:
+                husband = next((ind for ind in individuals if ind['ID'] == husband_id), None)
+                if husband and 'DEAT' in husband:
+                    husband_death_date = husband['DEAT']
+                    if husband_death_date < marriage_date:
+                        errors.append(f"ERROR: (US05) - Marriage (MARR) date in family {family['ID']} occurs after the death of husband {husband['ID']}.")
+
+            # Check wife's death date if available
+            if wife_id:
+                wife = next((ind for ind in individuals if ind['ID'] == wife_id), None)
+                if wife and 'DEAT' in wife:
+                    wife_death_date = wife['DEAT']
+                    if wife_death_date < marriage_date:
+                        errors.append(f"ERROR: (US05) - Marriage (MARR) date in family {family['ID']} occurs after the death of wife {wife['ID']}.")
+
+
+
 #US07
 def check_death_age(individual,errors):
 	for ind in individual:
@@ -212,6 +249,36 @@ class TestUserStory03(unittest.TestCase):
         print()
         print("US03: Birth before death (Birth date after death date testcase)")
         self.assertNotEqual(actual, expected)
+
+class TestUserStory04(unittest.TestCase):
+    def test_marriage_before_divorce(self):
+        families = [
+            {'ID': 'F1', 'MARR': datetime(2000, 1, 1), 'DIV': datetime(1990, 1, 1)},
+            {'ID': 'F2', 'MARR': datetime(2000, 1, 1), 'DIV': datetime(2002, 1, 1)},
+        ]
+        errors = []
+        print()
+        print("US04: Marriage Before Divorce")
+        check_marriage_before_divorce(families,errors)
+        self.assertEqual(errors, ["ERROR: (US04) - Marriage (MARR) date in family F1 occurs after the divorce (DIV) date."])
+
+
+class TestUserStory05(unittest.TestCase):
+    def test_marriage_before_death(self):
+        individuals = [
+            {'ID': 'I1', 'DEAT': datetime(1999, 1, 1)},
+            {'ID': 'I2', 'DEAT': datetime(2005, 1, 1)},
+        ]
+
+        families = [
+            {'ID': 'F1', 'MARR': datetime(2000, 1, 1), 'HUSB': 'I1', 'WIFE': 'I2'},
+        ]
+        errors = []
+        print()
+        print("US05: Marriage Before Death")
+        check_marriage_before_death(families, individuals,errors)
+        self.assertEqual(errors, ["ERROR: (US05) - Marriage (MARR) date in family F1 occurs after the death of husband I1."])
+
 
 class TestUserStory07(unittest.TestCase):
     def test_us07_death_age(self):
