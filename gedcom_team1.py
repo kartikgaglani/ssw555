@@ -545,12 +545,28 @@ def sibling_should_not_marry(families):
     return invalid
 
 
+#US 30
+def listLivingMarried(fam, ind):
+    output=[]
+    for family in fams:
+        if 'DIV' not in family:
+            husbID = int(''.join(filter(str.isdigit, family["HUSB"])))
+            husb = search_id(ind, len(ind), 0, husbID)
+            wifeID = int(''.join(filter(str.isdigit, family["WIFE"])))
+            wife = search_id(ind, len(ind), 0, wifeID)
+            if(('DEAT' not in husb) and ('DEAT' not in wife)):
+                output.append(family)
+    if len(output) == 0:
+        errors.append("Error 30: NO living married people")
+    else:
+        return output
 
+#US 21
 
-
-
-
-
+def correctGenderForRole(husb,wife):
+    if husb['SEX'] != 'M' or wife['SEX'] != 'F':
+        return True
+    return False
 
 def init():
     try:
@@ -629,7 +645,7 @@ def init():
     if len(upcoming_anniversaries)==0:
         errors.append("Error 39: No upcoming anniversaries in the next 30 days for living couples.")
 
-
+    list_of_living_married = listLivingMarried(fams,individual)
     for per in individual:
         per = age(current_date, per)
         #US29
@@ -659,6 +675,13 @@ def init():
         hbdae = husband["BIRT"]
         wbdae = wife["BIRT"]
         mdae = family["MARR"]
+
+        #US21 - Correct gender for role
+        if correctGenderForRole(husband,wife):
+            errors.append("ERROR US21: " + family["ID"] + ": Husband in family should be male and wife in family should be female.")
+        if not correctGenderForRole(husband,wife):
+            errors.append("ERROR US21: No such thing in the family.")
+
 
         #US 10
         if not after_14yrs(hbdae, mdae):
@@ -722,6 +745,9 @@ def init():
     outfile.write('\n\n')
     outfile.write('US 33\n')
     outfile.write(tabulate(orphans, headers="keys", tablefmt="github"))
+    outfile.write('\n\n')
+    outfile.write('US 30\n')
+    outfile.write(tabulate(list_of_living_married, headers="keys", tablefmt="github"))
     outfile.write('\n\n')
 
     outfile.write('ERRORS\n')
