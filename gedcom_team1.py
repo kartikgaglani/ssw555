@@ -567,6 +567,34 @@ def correctGenderForRole(husb,wife):
     if husb['SEX'] != 'M' or wife['SEX'] != 'F':
         return True
     return False
+#us 31
+def list_living_single(individual):
+    living_singles = []
+    for ind in individual:
+        if 'AGE' in ind and 'DEAT' not in ind:
+            age = ind['AGE']
+            if age > 30 and 'FAMS' not in ind:
+                living_singles.append(ind)
+    return living_singles
+
+#us35
+
+def list_recent_births(current_date, individuals):
+    recent_births = []
+
+    for ind in individuals:
+        if 'BIRT' in ind and 'DEAT' not in ind:
+            birth_date_str = ind['BIRT']
+            birth_date = datetime.strptime(date, '%d %b %Y').date()
+            
+            days_since_birth = (current_date - birth_date).days
+            if 0 <= days_since_birth <= 30:
+                recent_births.append(ind)
+
+    return recent_births
+
+
+
 
 def init():
     try:
@@ -598,6 +626,8 @@ def init():
             check_birth_before_death(individual)
             check_marriage_before_divorce(fams)
             check_marriage_before_death(fams,individual)
+
+        
             
 
 
@@ -616,10 +646,15 @@ def init():
 
     individual.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
     fams.sort(key=lambda info: int(''.join(filter(str.isdigit, info["ID"]))))
+
+   
+
     #US29
     list_deceased = []
     upcoming_birthdays = []
     orphans = []
+    list_of_living_married = listLivingMarried(fams,individual)
+
 
     for ind in individual:
         if 'BIRT' in ind and 'DEAT' not in ind:
@@ -733,6 +768,15 @@ def init():
     outfile.write('\n\n')
     outfile.write(tabulate(fams, headers="keys", tablefmt="github"))
     outfile.write('\n\n')
+      # US31 - List living singles
+    living_singles = list_living_single(individual)
+    if living_singles:
+            print("\nLiving Singles (over 30 and never married):")
+            for single in living_singles:
+                print(f"{single['NAME']} (ID: {single['ID']}) - Age: {single['AGE']}")
+    else:
+            print("\nNo living singles found (over 30 and never married).")
+
     #US29
     outfile.write('US 29: List of people deceased\n')
     outfile.write(tabulate(list_deceased, headers="keys", tablefmt="github"))
