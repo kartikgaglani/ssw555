@@ -46,12 +46,11 @@ US 38
 | Sonika /Naik/  | 1973-12-07 |
 
 US 39
-| ID   | HUSB          | WIFE            | CHIL              | MARR       |
-|------|---------------|-----------------|-------------------|------------|
-| @F3@ | Mahesh /Naik/ | Anjali /Naik/   | ['@I10@', '@I3@'] | 1960-12-28 |
-| @F5@ | Tarak /Bhide/ | Madhavi /Bhide/ | ['@I9@']          | 1932-11-17 |
-| @F6@ | Anjali /Naik/ | Sonika /Naik/   |                   | 2011-12-26 |
-| @F7@ | Anjali /Naik/ | Babita /Naik/   |                   | 2011-12-26 |
+| ID   | HUSB          | WIFE          | CHIL              | MARR       |
+|------|---------------|---------------|-------------------|------------|
+| @F3@ | Mahesh /Naik/ | Anjali /Naik/ | ['@I10@', '@I3@'] | 1960-12-28 |
+| @F6@ | Anjali /Naik/ | Sonika /Naik/ |                   | 2011-12-26 |
+| @F7@ | Anjali /Naik/ | Babita /Naik/ |                   | 2011-12-26 |
 
 US 33
 | ID    | NAME          | SEX   | BIRT       | DEAT       | FAMC   | FAMS             |   AGE | ALIVE   |
