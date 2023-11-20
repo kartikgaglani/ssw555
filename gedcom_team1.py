@@ -258,15 +258,7 @@ def check_birth_before_parent_death(individuals, families):
                     if difference > 9:
                         errors.append(f"ERROR: (US09) - Child {child_id} was born more than 9 months after the death of the father {father_id}.")
 
-# Story Id: US15
-# def fewer_than_15_siblings(families):
-#     invalid = False
-#     for family_id, family_data in families.items():
-#         siblings = get_all_individual_data_by_key(families, family_id, 'CHIL')
-#         if len(siblings) > 15:
-#             invalid = True
-#             print(f"ERROR: US15: Family has more than 15 siblings")
-#     return invalid
+
 
 # US23
 def check_unique_name_birth(outfile):
@@ -517,7 +509,7 @@ def male_last_names_same_family(individual, fams):
                             last_name_errors.append(error)
 
     return last_name_errors
-# US17
+#US 17
 def parents_should_not_marry_descendants(individuals, families):
     invalid = False
     for ind_id in individuals:
@@ -532,7 +524,7 @@ def parents_should_not_marry_descendants(individuals, families):
                     print(f"ERROR: US17: Parent is married to their descendant")
     return invalid
     
-# US18
+#US 18
 def sibling_should_not_marry(families):
     invalid = False
     husb_wives = get_all_husband_and_wives(families)
@@ -592,6 +584,32 @@ def list_recent_births(current_date, individuals):
                 recent_births.append(ind)
 
     return recent_births
+
+#US 36
+def list_recent_deaths(current_date, individuals):
+    recent_deaths = []
+
+    for individual in individuals:
+        death_date = get_death_date(individual)
+        if death_date:
+            days_since_death = (current_date - death_date).days
+            if 0 <= days_since_death <= 30:
+                recent_deaths.append(individual)
+
+    return recent_deaths
+
+#US 38
+def list_upcoming_birthdays(current_date, individuals):
+    upcoming_birthdays = []
+
+    for individual in individuals:
+        birth_date = get_birth_date(individual)
+        if birth_date:
+            days_until_birthday = (birth_date - current_date).days
+            if 0 <= days_until_birthday <= 30:
+                upcoming_birthdays.append(individual)
+
+    return upcoming_birthdays
 
 
 
