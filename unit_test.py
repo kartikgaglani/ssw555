@@ -89,6 +89,29 @@ def check_marriage_before_death(families, individuals,errors):
                     if wife_death_date < marriage_date:
                         errors.append(f"ERROR: (US05) - Marriage (MARR) date in family {family['ID']} occurs after the death of wife {wife['ID']}.")
 
+#US06
+def check_divorce_before_death(families, individuals,errors):
+   
+    for family in families:
+        if 'DIV' in family:
+            divorce_date = family['DIV']
+            husband_id = family.get('HUSB')
+            wife_id = family.get('WIFE')
+
+            if husband_id:
+                husband = next((ind for ind in individuals if ind['ID'] == husband_id), None)
+                if husband and 'DEAT' in husband:
+                    husband_death_date = husband['DEAT']
+                    if husband_death_date < divorce_date:
+                        errors.append(f"ERROR: (US06) - Divorce date in family {family['ID']} occurs after the death of husband {husband['ID']}.")
+
+            if wife_id:
+                wife = next((ind for ind in individuals if ind['ID'] == wife_id), None)
+                if wife and 'DEAT' in wife:
+                    wife_death_date = wife['DEAT']
+                    if wife_death_date < divorce_date:
+                        errors.append(f"ERROR: (US06) - Divorce date in family {family['ID']} occurs after the death of wife {wife['ID']}.")
+
 
 
 #US07
@@ -111,6 +134,14 @@ def check_living_age(individual,errors):
                 ((current_date.month, current_date.day) < (birth_date.month, birth_date.day))
             if age_at_current_date >= 150:
                 errors.append(f"ERROR: (US07) - Individual {ind['ID']} is alive and has an age of {age_at_current_date} years which is 150 years or more after birth.")
+
+#US42
+def convert_date(date):
+    try:
+        return datetime.strptime(date, '%d %b %Y').date()
+    except:
+        raise Exception("Date should be in the format 'Day Month Year'")
+
 
 
 class TestUserStory01(unittest.TestCase):
@@ -279,6 +310,26 @@ class TestUserStory05(unittest.TestCase):
         check_marriage_before_death(families, individuals,errors)
         self.assertEqual(errors, ["ERROR: (US05) - Marriage (MARR) date in family F1 occurs after the death of husband I1."])
 
+class TestUserStory06(unittest.TestCase):
+    def test_divorce_before_death(self):
+        individuals = [
+            {'ID': 'I1', 'DEAT': '2000-01-01'},
+            {'ID': 'I2', 'DEAT': '2005-06-15'},
+        ]
+        families = [
+            {'ID': 'F1', 'DIV': '2002-10-20', 'HUSB': 'I1', 'WIFE': 'I2'},
+           
+        ]
+
+        errors = []
+        print()
+        print("US06: Death before divorce ")
+        check_divorce_before_death(families, individuals, errors)
+
+        expected_errors = [
+            "ERROR: (US06) - Divorce date in family F1 occurs after the death of husband I1.",
+        ]
+        self.assertEqual(errors, expected_errors)
 
 class TestUserStory07(unittest.TestCase):
     def test_us07_death_age(self):
@@ -317,6 +368,23 @@ class TestUserStory07(unittest.TestCase):
         print("US07: Age less than 150 (Live Age testcase)")
         check_living_age(individuals,errors)
         self.assertEqual(len(errors), 0, "US07: One error should be found")
+
+class TestUserStory42(unittest.TestCase):
+    def test_valid_date_conversion(self):
+        valid_date = '20 Nov 2023'
+        print()
+        print("US42: Valid Date testcase")
+        converted_date = convert_date(valid_date)
+        expected_date = datetime.strptime(valid_date, '%d %b %Y').date()
+        self.assertEqual(converted_date, expected_date)
+
+    def test_invalid_date_conversion(self):
+        invalid_date = '31 Apr 2023'
+        print()
+        print("US07: Invalid Date testcase")
+        with self.assertRaises(Exception) as context:
+            convert_date(invalid_date)
+        self.assertEqual(str(context.exception), "Date should be in the format 'Day Month Year'")
 
 
 class TestUserStoryTwentyFive(unittest.TestCase):

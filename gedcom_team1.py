@@ -230,6 +230,29 @@ def check_marriage_before_death(families, individuals):
                     if wife_death_date < marriage_date:
                         errors.append(f"ERROR: (US05) - Marriage (MARR) date in family {family['ID']} occurs after the death of wife {wife['ID']}.")
 
+#US06
+def check_divorce_before_death(families, individuals):
+   
+    for family in families:
+        if 'DIV' in family:
+            divorce_date = family['DIV']
+            husband_id = family.get('HUSB')
+            wife_id = family.get('WIFE')
+
+            if husband_id:
+                husband = next((ind for ind in individuals if ind['ID'] == husband_id), None)
+                if husband and 'DEAT' in husband:
+                    husband_death_date = husband['DEAT']
+                    if husband_death_date < divorce_date:
+                        errors.append(f"ERROR: (US06) - Divorce date in family {family['ID']} occurs after the death of husband {husband['ID']}.")
+
+            if wife_id:
+                wife = next((ind for ind in individuals if ind['ID'] == wife_id), None)
+                if wife and 'DEAT' in wife:
+                    wife_death_date = wife['DEAT']
+                    if wife_death_date < divorce_date:
+                        errors.append(f"ERROR: (US06) - Divorce date in family {family['ID']} occurs after the death of wife {wife['ID']}.")
+
 
 
 #US09
@@ -347,7 +370,7 @@ def check_validity(fileLine, args, is_valid):
 
     return returnOutput
 
-
+#US42(This function raises an exception when there is illegitimate date)
 def covert_date(date):
     try:
         return datetime.strptime(date, '%d %b %Y').date()
@@ -644,7 +667,7 @@ def init():
             check_birth_before_death(individual)
             check_marriage_before_divorce(fams)
             check_marriage_before_death(fams,individual)
-
+            check_divorce_before_death(fams,individual)
         
             
 

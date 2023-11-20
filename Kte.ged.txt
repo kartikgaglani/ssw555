@@ -19,13 +19,13 @@
 
 | ID   | WIFE            | HUSB            | CHIL              | MARR       | DIV        |
 |------|-----------------|-----------------|-------------------|------------|------------|
-| @F1@ | Sandhya /Naik/  | Sandip /Naik/   | ['@I1@', '@I4@']  | 1995-05-30 | 1985-02-06 |
+| @F1@ | Sandhya /Naik/  | Sandip /Naik/   | ['@I1@', '@I4@']  | 1995-05-30 | 1985-02-28 |
 | @F2@ | Kashibai /More/ | Tulsidas /More/ | ['@I2@', '@I7@']  | 1965-04-21 |            |
 | @F3@ | Anjali /Naik/   | Mahesh /Naik/   | ['@I10@', '@I3@'] | 1960-12-28 |            |
 | @F4@ | Geeta /Naik/    | Tukaram /Naik/  | ['@I8@']          | 1930-08-04 |            |
 | @F5@ | Madhavi /Bhide/ | Tarak /Bhide/   | ['@I9@']          | 1932-11-17 |            |
 | @F6@ | Sonika /Naik/   | Anjali /Naik/   |                   | 2011-12-26 |            |
-| @F7@ | Babita /Naik/   | Anjali /Naik/   |                   | 2011-12-26 |            |
+| @F7@ | Babita /Naik/   | Anjali /Naik/   |                   | 2011-12-26 | 2015-02-06 |
 
 US 29: List of people deceased
 | ID    | NAME            | SEX   | BIRT       | DEAT       | FAMC   | FAMS             |   AGE | ALIVE   |
@@ -46,11 +46,11 @@ US 38
 | Sonika /Naik/  | 1973-12-07 |
 
 US 39
-| ID   | HUSB          | WIFE          | CHIL              | MARR       |
-|------|---------------|---------------|-------------------|------------|
-| @F3@ | Mahesh /Naik/ | Anjali /Naik/ | ['@I10@', '@I3@'] | 1960-12-28 |
-| @F6@ | Anjali /Naik/ | Sonika /Naik/ |                   | 2011-12-26 |
-| @F7@ | Anjali /Naik/ | Babita /Naik/ |                   | 2011-12-26 |
+| ID   | HUSB          | WIFE          | CHIL              | MARR       | DIV        |
+|------|---------------|---------------|-------------------|------------|------------|
+| @F3@ | Mahesh /Naik/ | Anjali /Naik/ | ['@I10@', '@I3@'] | 1960-12-28 |            |
+| @F6@ | Anjali /Naik/ | Sonika /Naik/ |                   | 2011-12-26 |            |
+| @F7@ | Anjali /Naik/ | Babita /Naik/ |                   | 2011-12-26 | 2015-02-06 |
 
 US 33
 | ID    | NAME          | SEX   | BIRT       | DEAT       | FAMC   | FAMS             |   AGE | ALIVE   |
@@ -71,6 +71,7 @@ ERROR: (US02) - Birth of individual @I10@ occurred after their marriage in famil
 ERROR: (US03) -  Birth of individual @I10@ occurred after their death.
 ERROR: (US04) - Marriage (MARR) date in family @F1@ occurs after the divorce (DIV) date.
 ERROR: (US05) - Marriage (MARR) date in family @F7@ occurs after the death of wife @I16@.
+ERROR: (US06) - Divorce date in family @F7@ occurs after the death of wife @I16@.
 ERROR US21: No such thing in the family.
 ERROR US10: MarriageSandip /Naik/should be at least 14 years after birth of husband
 ERROR US10: MarriageSandhya /Naik/ should be at least 14 years after birth of wife
